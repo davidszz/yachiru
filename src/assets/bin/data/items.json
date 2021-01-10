@@ -1,0 +1,168 @@
+{
+    "eggs": [
+        {
+            "id": "0001",
+            "name": "Ovo de Dragão de Fogo",
+            "eggId": "0001",
+            "dragonId": "0001",
+            "price": 500,
+            "sell": 100,
+            "limit": 3
+        },
+        {
+            "id": "0002",
+            "name": "Ovo de Dragão de Água",
+            "eggId": "0002",
+            "dragonId": "0002",
+            "price": 500,
+            "sell": 100,
+            "limit": 3
+        },
+        {
+            "id": "0003",
+            "name": "Ovo de Dragão de Terra",
+            "eggId": "0003",
+            "dragonId": "0003",
+            "price": 500,
+            "sell": 100,
+            "limit": 3
+        },
+        {
+            "id": "0004",
+            "name": "Ovo de Dragão de Planta",
+            "eggId": "0004",
+            "dragonId": "0004",
+            "price": 500,
+            "sell": 100,
+            "limit": 3
+        }
+    ],
+    "farms": [
+        {
+            "id": "1004",
+            "name": "Fazenda",
+            "farmId": "0001",
+            "price": 100
+        },
+        {
+            "id": "1005",
+            "name": "Fazenda Rara",
+            "farmId": "0002",
+            "price": 250,
+            "level": 5
+        },
+        {
+            "id": "1006",
+            "name": "Fazenda Épica",
+            "farmId": "0003",
+            "price": 1000,
+            "level": 8
+        },
+        {
+            "id": "1007",
+            "name": "Fazenda Grande",
+            "farmId": "0004",
+            "price": 25000,
+            "level": 20
+        },
+        {
+            "id": "1008",
+            "name": "Fazenda Mítica",
+            "farmId": "0005",
+            "price": 50000,
+            "level": 25
+        },
+        {
+            "id": "1009",
+            "name": "Fazenda Lendária",
+            "farmId": "0006",
+            "price": 200000,
+            "level": 30
+        },
+        {
+            "id": "1010",
+            "name": "Fazenda Enorme",
+            "farmId": "0007",
+            "price": 500000,
+            "level": 50
+        },
+        {
+            "id": "1011",
+            "name": "Fazenda Mágica",
+            "farmId": "0008",
+            "price": 1250000,
+            "level": 60
+        },
+        {
+            "id": "1012",
+            "name": "Fazenda Interestelar",
+            "farmId": "0009",
+            "price": 20000000,
+            "level": 70
+        }
+    ],
+    "structures": [
+        {
+            "id": "1001",
+            "name": "Incubadora Pequena",
+            "hatcheryId": "0001",
+            "price": 5000
+        },
+        {
+            "id": "1002",
+            "name": "Incubadora Média",
+            "hatcheryId": "0002",
+            "level": 15,
+            "price": 25000
+        },
+        {
+            "id": "1003",
+            "name": "Incubadora Grande",
+            "hatcheryId": "0003",
+            "level": 30,
+            "price": 200000
+        },
+        {
+            "id": "1013",
+            "name": "Templo Mágico",
+            "templeId": "0001",
+            "level": 15,
+            "price": 500000
+        },
+        {
+            "id": "1014",
+            "name": "Templo Nobre",
+            "templeId": "0002",
+            "level": 20,
+            "price": 1000000
+        },
+        {
+            "id": "1015",
+            "name": "Templo do Cavaleiro",
+            "templeId": "0003",
+            "level": 35,
+            "price": 2000000
+        },
+        {
+            "id": "1016",
+            "name": "Templo Mestre",
+            "templeId": "0004",
+            "level": 50,
+            "price": 5000000
+        },
+        {
+            "id": "1017",
+            "name": "Templo Épico",
+            "templeId": "0005",
+            "level": 60,
+            "price": 10000000
+        },
+        {
+            "id": "1018",
+            "name": "Templo das Maravilhas",
+            "templeId": "0006",
+            "level": 80,
+            "price": 25000000
+        }
+    ]
+}

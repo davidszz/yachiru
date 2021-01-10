@@ -1,0 +1,30 @@
+{
+    "0001": {
+        "name": "Ovo de Dragão de Fogo",
+        "elements": [ "fire" ],
+        "hatchingTime": 30,
+        "hatchingXp": 50,
+        "icon": "src/assets/images/dragons/fire-dragon-egg.png"
+    },
+    "0002": {
+        "name": "Ovo de Dragão de Água",
+        "elements": [ "water" ],
+        "hatchingTime": 30,
+        "hatchingXp": 50,
+        "icon": "src/assets/images/dragons/water-dragon-egg.png"
+    },
+    "0003": {
+        "name": "Ovo de Dragão de Terra",
+        "elements": [ "earth" ],
+        "hatchingTime": 30,
+        "hatchingXp": 50,
+        "icon": "src/assets/images/dragons/earth-dragon-egg.png"
+    },
+    "0004": {
+        "name": "Ovo de Dragão de Planta",
+        "elements": [ "plant" ],
+        "hatchingTime": 30,
+        "hatchingXp": 50,
+        "icon": "src/assets/images/dragons/plant-dragon-egg.png"
+    }
+}

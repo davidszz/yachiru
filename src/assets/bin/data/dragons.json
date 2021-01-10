@@ -1,0 +1,70 @@
+{
+    "0001": {
+        "name": "Dragão de Fogo",
+        "shortName": "fire-dragão",
+        "category": "1",
+        "breedable": true,
+        "breedingTime": 30,
+        "elements": [ "fire", "water", "earth", "plant" ],
+        "baseGold": 20,
+        "baseHealth": 500,
+        "baseAttack": 200,
+        "baseDefense": 50,
+        "icons": {
+            "1": "src/assets/images/dragons/fire-dragon-baby.png",
+            "10": "src/assets/images/dragons/fire-dragon-young.png",
+            "20": "src/assets/images/dragons/fire-dragon-adult.png"
+        }
+    },
+    "0002": {
+        "name": "Dragão de Água",
+        "shortName": "water-dragão",
+        "category": "1",
+        "breedable": true,
+        "breedingTime": 30,
+        "elements": [ "water" ],
+        "baseGold": 20,
+        "baseHealth": 500,
+        "baseAttack": 150,
+        "baseDefense": 100,
+        "icons": {
+            "1": "src/assets/images/dragons/water-dragon-baby.png",
+            "10": "src/assets/images/dragons/water-dragon-young.png",
+            "20": "src/assets/images/dragons/water-dragon-adult.png"
+        }
+    },
+    "0003": {
+        "name": "Dragão de Terra",
+        "shortName": "earth-dragão",
+        "category": "1",
+        "breedable": true,
+        "breedingTime": 30,
+        "elements": [ "earth" ],
+        "baseGold": 20,
+        "baseHealth": 700,
+        "baseAttack": 100,
+        "baseDefense": 50,
+        "icons": {
+            "1": "src/assets/images/dragons/earth-dragon-baby.png",
+            "10": "src/assets/images/dragons/earth-dragon-young.png",
+            "20": "src/assets/images/dragons/earth-dragon-adult.png"
+        }
+    },
+    "0004": {
+        "name": "Dragão de Planta",
+        "shortName": "plant-dragão",
+        "category": "1",
+        "breedable": true,
+        "breedingTime": 30,
+        "elements": [ "plant" ],
+        "baseGold": 20,
+        "baseHealth": 500,
+        "baseAttack": 150,
+        "baseDefense": 200,
+        "icons": {
+            "1": "src/assets/images/dragons/plant-dragon-baby.png",
+            "10": "src/assets/images/dragons/plant-dragon-young.png",
+            "20": "src/assets/images/dragons/plant-dragon-adult.png"
+        }
+    }
+}

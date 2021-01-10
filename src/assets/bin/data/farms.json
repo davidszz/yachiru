@@ -1,0 +1,74 @@
+{
+    "0001": {
+        "name": "Fazenda",
+        "crop": "Flor Sinos de Dragão",
+        "production": 5,
+        "cooldown": 30,
+        "xp": 5,
+        "emoji": "<:small_farm:792881826963521568>"
+    },
+    "0002": {
+        "name": "Fazenda Rara",
+        "crop": "Pimenta ardente de Dragão",
+        "production": 25,
+        "cooldown": 300,
+        "xp": 25,
+        "emoji": "<:small_farm:792881826963521568>"
+    },
+    "0003": {
+        "name": "Fazenda Épica",
+        "crop": "Lagarta Lírio",
+        "production": 75,
+        "cooldown": 1800,
+        "xp": 50,
+        "emoji": "<:small_farm:792881826963521568>"
+    },
+    "0004": {
+        "name": "Fazenda Grande",
+        "crop": "Chifres de Unicornio",
+        "production": 200,
+        "cooldown": 7200,
+        "xp": 100,
+        "emoji": "<:medium_farm:792881825885978655>"
+    },
+    "0005": {
+        "name": "Fazenda Mítica",
+        "crop": "Flor de Joaninha",
+        "production": 500,
+        "cooldown": 21600,
+        "xp": 150,
+        "emoji": "<:medium_farm:792881825885978655>"
+    },
+    "0006": {
+        "name": "Fazenda Lendária",
+        "crop": "Flor Arco Iris",
+        "production": 2250,
+        "cooldown": 25200,
+        "xp": 150,
+        "emoji": "<:medium_farm:792881825885978655>"
+    },
+    "0007": {
+        "name": "Fazenda Enorme",
+        "crop": "Bolas de Espinhos",
+        "production": 10000,
+        "cooldown": 32400,
+        "xp": 200,
+        "emoji": "<:big_farm:792881826615263302>"
+    },
+    "0008": {
+        "name": "Fazenda Mágica",
+        "crop": "Planta Carnivora",
+        "production": 25000,
+        "cooldown": 43200,
+        "xp": 200,
+        "emoji": "<:big_farm:792881826615263302>"
+    },
+    "0009": {
+        "name": "Fazenda Insterestelar",
+        "crop": "Estrelas Brilhantes",
+        "production": 150000,
+        "cooldown": 86400,
+        "xp": 200,
+        "emoji": "<:big_farm:792881826615263302>"
+    }
+}

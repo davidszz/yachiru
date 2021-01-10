@@ -1,0 +1,86 @@
+{
+    "1": {
+        "src": "src/assets/borders/border-lvl1.png",
+        "color": "#ffffff"
+    },
+    "5": {
+        "src": "src/assets/borders/border-lvl5.png",
+        "color": "#00bd09"
+    },
+    "10": {
+        "src": "src/assets/borders/border-lvl10.png",
+        "color": "#0091ff"
+    },
+    "15": {
+        "src": "src/assets/borders/border-lvl15.png",
+        "color": "#5c2f29"
+    },
+    "20": {
+        "src": "src/assets/borders/border-lvl20.png",
+        "color": "#ffffff"
+    },
+    "25": {
+        "src": "src/assets/borders/border-lvl25.png",
+        "color": "#00bd09"
+    },
+    "30": {
+        "src": "src/assets/borders/border-lvl30.png",
+        "color": "#0091ff"
+    },
+    "35": {
+        "src": "src/assets/borders/border-lvl35.png",
+        "color": "#fffb00"
+    },
+    "40": {
+        "src": "src/assets/borders/border-lvl40.png",
+        "color": "#ffffff"
+    },
+    "45": {
+        "src": "src/assets/borders/border-lvl45.png",
+        "color": "#00bd09"
+    },
+    "50": {
+        "src": "src/assets/borders/border-lvl50.png",
+        "color": "#0091ff"
+    },
+    "55": {
+        "src": "src/assets/borders/border-lvl55.png",
+        "color": "#fffb00"
+    },
+    "60": {
+        "src": "src/assets/borders/border-lvl60.png",
+        "color": "#ffffff"
+    },
+    "65": {
+        "src": "src/assets/borders/border-lvl65.png",
+        "color": "#00bd09"
+    },
+    "70": {
+        "src": "src/assets/borders/border-lvl70.png",
+        "color": "#0091ff"
+    },
+    "75": {
+        "src": "src/assets/borders/border-lvl75.png",
+        "color": "#fffb00"
+    },
+    "80": {
+        "src": "src/assets/borders/border-lvl80.png",
+        "color": "#ffffff"
+    },
+    "85": {
+        "src": "src/assets/borders/border-lvl85.png",
+        "color": "#00bd09"
+    },
+    "90": {
+        "src": "src/assets/borders/border-lvl90.png",
+        "color": "#0091ff"
+    },
+    "95": {
+        "src": "src/assets/borders/border-lvl95.png",
+        "color": "#fffb00"
+    },
+    "100": {
+        "src": "src/assets/borders/border-lvl100.png",
+        "color": "#ff0000"
+    }
+}

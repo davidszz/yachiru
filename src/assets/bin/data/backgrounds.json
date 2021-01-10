@@ -1,0 +1,10 @@
+{
+    "1": {
+        "name": "Padrão",
+        "src": "src/assets/backgrounds/discord_dark.png"
+    },
+    "2": {
+        "name": "Padrão (Claro)",
+        "src": "src/assets/backgrounds/discord_light.jpg"
+    }
+}

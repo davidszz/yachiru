@@ -1,0 +1,30 @@
+{
+    "1": {
+        "name": "Malabarista",
+        "investment": 0,
+        "salary": 500,
+        "xp": 20,
+        "requiredLevel": 1
+    },
+    "2": {
+        "name": "Táxista",
+        "investment": 5000,
+        "salary": 1000,
+        "xp": 25,
+        "requiredLevel": 1
+    },
+    "3": {
+        "name": "Uber",
+        "investment": 10000,
+        "salary": 2000,
+        "xp": 40,
+        "requiredLevel": 5
+    },
+    "4": {
+        "name": "Farmaceutico",
+        "investment": 25000,
+        "salary": 5000,
+        "xp": 60,
+        "requiredLevel": 5
+    }
+}

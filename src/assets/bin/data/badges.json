@@ -1,0 +1,46 @@
+{
+    "1": {
+        "name": "Staff",
+        "icon": "src/assets/badges/staff.png"
+    },
+    "2": {
+        "name": "Partner",
+        "icon": "src/assets/badges/partner.png"
+    },
+    "3": {
+        "name": "Hypesquad Events",
+        "icon": "src/assets/badges/hypesquad.png"
+    },
+    "4": {
+        "name": "Hypesquad Brilliance",
+        "icon": "src/assets/badges/brilliance.png"
+    },
+    "5": {
+        "name": "Hypesquad Balance",
+        "icon": "src/assets/badges/balance.png"
+    },
+    "6": {
+        "name": "Hypesquad Bravery",
+        "icon": "src/assets/badges/bravery.png"
+    },
+    "7": {
+        "name": "Bug Hunter",
+        "icon": "src/assets/badges/bug-hunter.png"
+    },
+    "8": {
+        "name": "Bug Hunter Level 2",
+        "icon": "src/assets/badges/bug-hunter-lvl2.png"
+    },
+    "9": {
+        "name": "Bot Developer",
+        "icon": "src/assets/badges/developer.png"
+    },
+    "10": {
+        "name": "Early Supporter",
+        "icon": "src/assets/badges/early.png"
+    },
+    "11": {
+        "name": "Nitro",
+        "icon": "src/assets/badges/nitro.png"
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "0001": {
+        "name": "Incubadora Level 1",
+        "shortName": "incubator-lvl-1",
+        "slots": 1,
+        "icon": "src/assets/images/incubator-1.png"
+    },
+    "0002": {
+        "name": "Incubadora Level 2",
+        "shortName": "incubator-lvl-2",
+        "slots": 2,
+        "icon": "src/assets/images/incubator-2.png"
+    },
+    "0003": {
+        "name": "Incubadora Level 3",
+        "shortName": "incubator-lvl-3",
+        "slots": 4,
+        "icon": "src/assets/images/incubator-3.png"
+    }
+}
