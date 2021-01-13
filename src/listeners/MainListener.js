@@ -63,7 +63,7 @@ class MainListener extends EventListener
                     const time = total > 0 ? total : 'alguns';
                     const format = total > 0 ? 'segundos' : 'milisegundos';
 
-                    return channel.send(`Espere **${time} ${format}** antes de usar outro comando.`);
+                    return message.channel.send(`Espere **${time} ${format}** antes de usar outro comando.`);
                 }
             }
 

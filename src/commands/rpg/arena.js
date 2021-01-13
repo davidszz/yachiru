@@ -78,7 +78,7 @@ module.exports = class extends Command
             ];
         }
 
-        embed.addField(`__${equipped.data.nickname || 'Seu dragão:'}__`, equippedInfos, true);
+        embed.addField(`__${equipped.data && equipped.data.nickname || 'Seu dragão:'}__`, equippedInfos, true);
         embed.addField('__Desafio:__', [
             `**${ndInfos.name} (lvl. ${nextDragon.level})**`,
             `Elementos: ${ndInfos.elements.map(x => Constants.emojis[`round_${x}`]).join('')}`,
