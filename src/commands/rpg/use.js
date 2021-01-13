@@ -44,7 +44,12 @@ module.exports = class extends Command
         
         if (itemCategory == 'eggs')
         {
-            let incubator = HatcherysData[userdata.incubator.id || '0001'];
+            if (!userdata.incubator.id)
+            {
+                return channel.send(`Você não possui nenhuma **incubadora**.`);
+            }
+
+            let incubator = HatcherysData[userdata.incubator.id];
             let userEggs = userdata.incubator.eggs || [];
 
             if (userEggs.length >= incubator.slots)
