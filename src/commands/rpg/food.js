@@ -6,9 +6,10 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'food',
-            aliases: [ 'comida' ],
+            name: 'comida',
+            aliases: [ 'food' ],
             category: 'RPG',
+            description: 'Mostra a quantidade de comida de dragão que um usuário possui.',
             usage: '[usuário]',
             examples: [
                 '@Wumpus'

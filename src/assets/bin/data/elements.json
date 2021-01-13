@@ -1,0 +1,7 @@
+{
+    "fisic": [],
+    "fire": [ "plant" ],
+    "water": [ "fire" ],
+    "earth": [ "water" ],
+    "plant": [ "earth" ]
+}

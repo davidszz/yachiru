@@ -1,5 +1,4 @@
-const { MessageEmbed } = require('discord.js');
-const { Command, FarmsData, MiscUtils, Constants } = require('../../');
+const { Command, FarmsData, MiscUtils, Constants, YachiruEmbed } = require('../../');
 const Emojis = Constants.emojis;
 
 module.exports = class extends Command 
@@ -7,8 +6,8 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'farms',
-            aliases: [ 'fazendas' ],
+            name: 'fazendas',
+            aliases: [ 'farms' ],
             category: 'RPG',
             description: 'Veja como estão suas fazendas.'
         });
@@ -29,8 +28,7 @@ module.exports = class extends Command
         var page = 1;
 
         const embedPage = (num) => {
-            const embed = new MessageEmbed()
-                .setColor('#FF0000')
+            const embed = new YachiruEmbed()
                 .setTitle(`Suas fazendas (${farms.length})`)
                 .setDescription(`Para colher a plantação de alguma fazenda use \`${this.prefix}colher <id ou tudo>\`\n`)
                 .setFooter(author.tag + `${pages > 1 ? ` • Página ${num}/${pages}` : ''}`, author.avatarIcon())

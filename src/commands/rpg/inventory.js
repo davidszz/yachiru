@@ -1,13 +1,12 @@
-const { MessageEmbed } = require('discord.js');
-const { Command, ItemsData } = require('../../');
+const { Command, ItemsData, YachiruEmbed } = require('../../');
 
 module.exports = class extends Command 
 {
     constructor(...args)
     {
         super(...args, {
-            name: 'inventory',
-            aliases: [ 'inventario', 'inv', 'inventário' ],
+            name: 'inventario',
+            aliases: [ 'inventory', 'inv', 'inventário' ],
             category: 'RPG',
             description: 'Abre seu inventário.'
         });
@@ -23,8 +22,7 @@ module.exports = class extends Command
             return channel.send('Você não possui **nenhum** item em seu inventário.');
         }
 
-        const embed = new MessageEmbed()
-            .setColor('#0084FF')
+        const embed = new YachiruEmbed()
             .setAuthor(`Seu inventário`, author.avatarIcon())
             .addField('Ajuda:', `Para usar um item use \`${this.client.prefix}usar <item>\``)
             .setFooter(author.tag, author.avatarIcon())

@@ -6,11 +6,12 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'temples',
-            aliases: [ 'templos' ],
+            name: 'templos',
+            aliases: [ 'temples' ],
             category: 'RPG',
             description: 'Veja seus templos já adquiridos.',
             usage: '[usuário]',
+            canvas: true,
             examples: [
                 '@Wumpus'
             ]

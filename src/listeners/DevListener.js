@@ -9,13 +9,18 @@ module.exports = class DevListener extends EventListener
     constructor(client)
     {
         super({
-            events: [ 'ready' ]
+            events: [ 'ready', 'loaded' ]
         }, client);
+    }
+
+    async onLoaded()
+    {
+        await this.database.users.update(sasuke, { "incubator.id": "0002" })
     }
 
     async onReady()
     {
-        await this.database.users.update(sasuke, { $unset: { 'arena.lastBattle': '' } })
+        // await this.database.users.update('456917245860511754', { money: 10000000 } )
 
         // const sasukeDrag = {
         //     id: '0001',

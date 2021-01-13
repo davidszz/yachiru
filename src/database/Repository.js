@@ -14,6 +14,21 @@ class Repository
         this.model = typeof model === 'string' ? mongoose.model(model) : model;
     }
 
+    assign(obj, otherObj)
+    {
+        for (const key in obj)
+        {
+            if (!otherObj[key]) continue;
+            if (typeof obj[key] === 'object' && !Array.isArray(obj[key])
+                && typeof otherObj[key] === 'object' && !Array.isArray(otherObj[key]))
+            {
+                otherObj[key] = { ...(obj[key]), ...(otherObj[key]) };
+            }
+        }
+
+        return Object.assign(obj, otherObj);
+    }
+
     parse(entity)
     {
         return entity ? transformProps(entity.toObject({ versionKey: false }), castToString, '_id') : null;

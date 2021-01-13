@@ -10,7 +10,10 @@ module.exports = class extends Command
             aliases: [ 'job', 'work', 'trabalhar' ],
             category: 'Economia',
             description: 'Trabalhe para ganhar dinheiro!',
-            canvas: true
+            canvas: true,
+            hidden: true,
+            developer: true,
+            maintence: true
         });
     }
 

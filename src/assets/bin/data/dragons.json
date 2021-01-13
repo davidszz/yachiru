@@ -1,46 +1,79 @@
 {
     "0001": {
-        "name": "Dragão de Fogo",
-        "shortName": "fire-dragão",
+        "name": "Dragão de Chamas",
+        "shortName": "flame-dragão",
+        "description": "Se você não aguenta o calor, fique longe do Dragão de Chamas! Essa criatura temperamental é facilmente detonada, mas se acalma com a mesma rapidez e sempre sente um profundo remorso pelas coisas que queimou.",
         "category": "1",
         "breedable": true,
         "breedingTime": 30,
-        "elements": [ "fire", "water", "earth", "plant" ],
-        "baseGold": 20,
+        "elements": [ "fire" ],
+        "baseGold": 5,
         "baseHealth": 500,
-        "baseAttack": 200,
-        "baseDefense": 50,
         "icons": {
             "1": "src/assets/images/dragons/fire-dragon-baby.png",
             "10": "src/assets/images/dragons/fire-dragon-young.png",
             "20": "src/assets/images/dragons/fire-dragon-adult.png"
-        }
+        },
+        "skills": [
+            {
+                "name": "Bolas de lava",
+                "element": "fire",
+                "power": 125
+            },
+            {
+                "name": "Flechas de fogo",
+                "element": "fire",
+                "power": 110
+            },
+            {
+                "name": "Gole nuclear",
+                "element": "fire",
+                "power": 131
+            }
+        ]
     },
     "0002": {
-        "name": "Dragão de Água",
-        "shortName": "water-dragão",
+        "name": "Dragão do Mar",
+        "shortName": "sea-dragão",
+        "description": "Se você gosta de esportes aquáticos, o Dragão do Mar será seu novo melhor amigo! Os dragões marinhos costumam ser confundidos com focas ou golfinhos.",
         "category": "1",
         "breedable": true,
         "breedingTime": 30,
         "elements": [ "water" ],
-        "baseGold": 20,
+        "baseGold": 5,
         "baseHealth": 500,
-        "baseAttack": 150,
-        "baseDefense": 100,
         "icons": {
             "1": "src/assets/images/dragons/water-dragon-baby.png",
             "10": "src/assets/images/dragons/water-dragon-young.png",
             "20": "src/assets/images/dragons/water-dragon-adult.png"
-        }
+        },
+        "skills": [
+            {
+                "name": "Tsunami",
+                "element": "water",
+                "power": 128
+            },
+            {
+                "name": "Inundação",
+                "element": "water",
+                "power": 114
+            },
+            {
+                "name": "Tempestade",
+                "element": "water",
+                "power": 152
+            }
+        ]
     },
     "0003": {
         "name": "Dragão de Terra",
         "shortName": "earth-dragão",
+        "description": "Não se assuste, não é um terremoto, mas um digno Dragão da Terra! Dragões da Terra não são conhecidos por sua beleza, mas por seu amor pela sujeira e sua natureza extremamente humilde e honesta.",
         "category": "1",
         "breedable": true,
         "breedingTime": 30,
         "elements": [ "earth" ],
-        "baseGold": 20,
+        "baseGold": 5,
         "baseHealth": 700,
         "baseAttack": 100,
         "baseDefense": 50,
@@ -48,16 +81,34 @@
             "1": "src/assets/images/dragons/earth-dragon-baby.png",
             "10": "src/assets/images/dragons/earth-dragon-young.png",
             "20": "src/assets/images/dragons/earth-dragon-adult.png"
-        }
+        },
+        "skills": [
+            {
+                "name": "Terremoto",
+                "element": "earth",
+                "power": 125
+            },
+            {
+                "name": "Chuva de meteoros",
+                "element": "earth",
+                "power": 123
+            },
+            {
+                "name": "Montanhas",
+                "element": "earth",
+                "power": 130
+            }
+        ]
     },
     "0004": {
-        "name": "Dragão de Planta",
-        "shortName": "plant-dragão",
+        "name": "Dragão da Natureza",
+        "shortName": "nature-dragão",
+        "description": "O Dragão da Natureza ama humanos, animais e todos os seres vivos - alguns deles para fins gastronômicos. Mesmo que ela não tenha comido um humano inteiro, um dedo ou dois foram perdidos...",
         "category": "1",
         "breedable": true,
         "breedingTime": 30,
         "elements": [ "plant" ],
-        "baseGold": 20,
+        "baseGold": 5,
         "baseHealth": 500,
         "baseAttack": 150,
         "baseDefense": 200,
@@ -65,6 +116,23 @@
             "1": "src/assets/images/dragons/plant-dragon-baby.png",
             "10": "src/assets/images/dragons/plant-dragon-young.png",
             "20": "src/assets/images/dragons/plant-dragon-adult.png"
-        }
+        },
+        "skills": [
+            {
+                "name": "Raizes de costura",
+                "element": "plant",
+                "power": 151
+            },
+            {
+                "name": "Erva venenosa",
+                "element": "plant",
+                "power": 131
+            },
+            {
+                "name": "Explosão de folha",
+                "element": "plant",
+                "power": 101
+            }
+        ]
     }
 }

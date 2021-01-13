@@ -5,10 +5,10 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'feed',
-            aliases: [ 'alimentar' ],
+            name: 'alimentar',
+            aliases: [ 'feed' ],
             category: 'RPG',
-            description: 'Alimente um dragão.',
+            description: 'Alimente um de seus dragões.',
             usage: '<id>',
             examples: [
                 '1'
@@ -64,7 +64,7 @@ module.exports = class extends Command
             );
 
             const maxLevel = Object.values(temples)
-                .reduce((p, n) => n.reachLevel > p ? n.reachLevel : p, 0);
+                .reduce((p, n) => n.reachLevel > p ? n.reachLevel : p, 10);
 
             if (dragonData.level >= maxLevel)
             {

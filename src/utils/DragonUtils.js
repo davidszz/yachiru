@@ -1,3 +1,5 @@
+const ElementsData = require('../assets/bin/data/elements.json');
+
 module.exports = class DragonUtils
 {
     static nextFood(level)
@@ -20,9 +22,9 @@ module.exports = class DragonUtils
         return Math.round(total);
     }
 
-    static attackLevel(level, baseAttack)
+    static attackLevel(level, attack)
     {
-        return level <= 1 ? baseAttack : baseAttack + Math.pow(level, 2);
+        return level <= 1 ? attack : attack + Math.pow(level, 2);
     }
 
     static defenseLevel(level, baseDefense)
@@ -32,7 +34,7 @@ module.exports = class DragonUtils
 
     static healthLevel(level, baseHealth)
     {
-        return level <= 1 ? baseHealth : (3 * (Math.pow(level, 2)) + baseHealth);
+        return level <= 1 ? baseHealth : (15 * (Math.pow(level, 2)) + baseHealth);
     }
 
     static goldMinute(level, baseGold)
@@ -43,5 +45,42 @@ module.exports = class DragonUtils
     static getTotalGold(time, baseGold, level)
     {
         return parseInt((Date.now() - time) / 60000) * DragonUtils.goldMinute(level, baseGold);
+    }
+
+    static parseSkills(dragonSkills, level)
+    {
+        let parsedSkills = [
+            {
+                name: 'Soco',
+                element: 'fisic',
+                power: DragonUtils.attackLevel(level, 68)
+            }
+        ];
+
+        for (let skills of dragonSkills)
+        {
+            skills.power = DragonUtils.attackLevel(level, skills.power);
+            parsedSkills.push(skills);
+        }
+
+        return parsedSkills;
+    }
+
+    static compareElements(elementA, elementB)
+    {
+        let infosA = ElementsData[elementA];
+        let infosB = ElementsData[elementB];
+
+        if (infosA.includes(elementB))
+        {
+            return 'strong';
+        }
+        
+        if (infosB.includes(elementA))
+        {
+            return 'weak';
+        }
+
+        return 'normal';
     }
 }

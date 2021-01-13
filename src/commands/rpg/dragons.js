@@ -1,32 +1,18 @@
-const { MessageEmbed, MessageAttachment } = require('discord.js');
-const { Command, Constants, DragonsData, CanvasTemplates, DragonUtils, MiscUtils } = require('../../');
+const { Command, Constants, DragonsData, YachiruEmbed, DragonUtils, MiscUtils } = require('../../');
 
 module.exports = class extends Command 
 {
     constructor(...args)
     {
         super(...args, {
-            name: 'dragons',
-            aliases: [ 'dragões', 'dgs', 'dragão', 'dragon' ],
+            name: 'dragões',
+            aliases: [ 'dragons', 'drags' ],
             category: 'RPG',
-            description: 'Vizualize todos seus dragões.',
-            usage: '[id]',
-            examples: [
-                '5'
-            ],
-            parameters: [
-                {
-                    type: 'string',
-                    validate: (val) => /^\d+$/.test(val),
-                    errors: {
-                        validate: `Forneça um **id** válido contendo somente números.`
-                    }
-                }
-            ]
+            description: 'Vizualize todos seus dragões.'
         });
     }
 
-    async run(message, [ id ])
+    async run(message)
     {
         const { channel, author } = message;
 
@@ -38,86 +24,43 @@ module.exports = class extends Command
             return channel.send('Você não possui nenhum **dragão** até o momento.');
         }
 
-        if (id != null)
+        const embed = new YachiruEmbed()
+            .setAuthor(`Seus dragões (${dragons.length})`, author.avatarIcon())
+            .setFooter(author.tag, author.avatarIcon())
+            .addField('Informação:', `Use \`${this.prefix}dragão <id>\` para ver informações detalhadas sobre um dragão.`)
+            .setTimestamp();
+
+        let totalGold = 0;
+        for (let i = 0; i < dragons.length; i++)
         {
-            // const canvasPath = '../../utils/CanvasTemplates';
-            // delete require.cache[require.resolve(canvasPath)];
-            // const CanvasTemplates = require(canvasPath);
+            let dragon = dragons[i];
+            let dragonInfos = DragonsData[dragon.id.padStart(4, '0')];
 
-            id = parseInt(id);
-            let dragon = dragons[id - 1];
-            if (!dragon)
+            let nickname = dragon.nickname;
+            let level = dragon.level || 0;
+            let elements = dragonInfos.elements.map(el => Constants.emojis[`round_${el}`] || el);
+
+            let hasGold = '';
+            if (dragon.lastCollectedGold && ((Date.now() - dragon.lastCollectedGold) / 60000) >= 1)
             {
-                return channel.send(`Nenhum dragão com o id **${id}** foi encontrado.`);
-            }   
+                let gold = DragonUtils.getTotalGold(dragon.lastCollectedGold, dragonInfos.baseGold, level);
+                hasGold = ` **<:golden_bar:797222014754488350> ${MiscUtils.formatCurrency(gold)}**`;
 
-            channel.startTyping()
-                .catch(e => e);
-
-            const dragonInfos = DragonsData[dragon.id];
-            const elements = dragonInfos.elements.map(el => `src/assets/images/${el}-element.png`);
-            const level = dragon.level || 1;
-
-            const infos = {
-                name: dragonInfos.name,
-                nickname: dragon.nickname || null,
-                elements,
-                attack: DragonUtils.attackLevel(level, dragonInfos.baseAttack),
-                defense: DragonUtils.defenseLevel(level, dragonInfos.baseDefense),
-                health: DragonUtils.healthLevel(level, dragonInfos.baseHealth),
-                gold: DragonUtils.goldMinute(level, dragonInfos.baseGold),
-                food: DragonUtils.nextFood(level),
-                level,
-                dragonImage: dragonInfos.icons[(Object.keys(dragonInfos.icons).reduce((p, n) => Number(n) > Number(p) && Number(n) <= level ? n : p).toString())]
-            };
-
-            const buffer = await CanvasTemplates.dragonInfos(infos);
-            const attachment = new MessageAttachment(buffer, 'dragon-infos.png');
-
-            await message.yachiruReply(attachment);
-            channel.stopTyping(true);
-        }
-        else 
-        {
-            const embed = new MessageEmbed()
-                .setColor('#0084FF')
-                .setAuthor(`Seus dragões (${dragons.length})`, author.avatarIcon())
-                .setFooter(author.tag, author.avatarIcon())
-                .addField('Informação:', `Use \`${this.fullname} ${this.usage}\` para ver informações detalhadas sobre um dragão.`)
-                .setTimestamp();
-
-            let totalGold = 0;
-            for (let i = 0; i < dragons.length; i++)
-            {
-                let dragon = dragons[i];
-                let dragonInfos = DragonsData[dragon.id.padStart(4, '0')];
-
-                let nickname = dragon.nickname;
-                let level = dragon.level || 0;
-                let elements = dragonInfos.elements.map(el => Constants.emojis[`${el}_element`] || el);
-
-                let hasGold = '';
-                if (dragon.lastCollectedGold && ((Date.now() - dragon.lastCollectedGold) / 60000) >= 1)
-                {
-                    let gold = DragonUtils.getTotalGold(dragon.lastCollectedGold, dragonInfos.baseGold, level);
-                    hasGold = ` **<:golden_bar:797222014754488350> ${MiscUtils.formatCurrency(gold)}**`;
-
-                    totalGold += gold;
-                }
-
-                embed.setDescription([
-                    embed.description || '',
-                    `\`${`${i + 1}`.padStart(2, ' ')}\` **${nickname || dragonInfos.name}** ${elements.join('')} (lvl. ${level || 1})${hasGold}`
-                ]);
+                totalGold += gold;
             }
 
             embed.setDescription([
                 embed.description || '',
-                '',
-                `<:golden_bar:797222014754488350> **Ouro total:** ${MiscUtils.formatCurrency(totalGold)}`
+                `\`${`${i + 1}`.padStart(dragons.length.toString().length, ' ')}\` **${nickname || dragonInfos.name}** ${elements.join('')} (lvl. ${level || 1})${hasGold}`
             ]);
-
-            message.yachiruReply(embed);
         }
+
+        embed.setDescription([
+            embed.description || '',
+            '',
+            `<:golden_bar:797222014754488350> **Ouro total:** ${MiscUtils.formatCurrency(totalGold)}`
+        ]);
+
+        message.yachiruReply(embed);
     }
 }

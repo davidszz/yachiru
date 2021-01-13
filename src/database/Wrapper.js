@@ -15,6 +15,7 @@ class Wrapper
             this.users = new repositories.User(m);
             this.clans = new repositories.Clan(m);
             this.counters = new repositories.Counter(m);
+            this.guilds = new repositories.Guild(m);
         });
     }
 }

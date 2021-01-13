@@ -59,6 +59,7 @@ class Yachiru extends Discord.Client
         }
         
         this.loaded = true;
+        this.emit('loaded');
     }
 
     log(message, { tags = [], bold = false, italic = false, underline = false, reversed = false, bgColor = false, color = 'white' } = {}) 

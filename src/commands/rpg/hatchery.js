@@ -1,15 +1,15 @@
-const { MessageAttachment, MessageEmbed } = require('discord.js');
-const { Command, HatcherysData, EggsData, MiscUtils } = require('../..');
+const { MessageAttachment } = require('discord.js');
+const { Command, HatcherysData, EggsData, MiscUtils, YachiruEmbed } = require('../..');
 
 module.exports = class extends Command 
 {
     constructor(...args)
     {
         super(...args, {
-            name: 'hatchery',
-            aliases: [ 'inc', 'incubadora', 'incubator' ],
+            name: 'incubadora',
+            aliases: [ 'inc', 'hatchery', 'incubator' ],
             category: 'RPG',
-            description: 'Abre sua incubadora atual.'
+            description: 'Mostra informações sobre sua incubadora.'
         });
     }
 
@@ -26,11 +26,11 @@ module.exports = class extends Command
         }
 
         const attachment = new MessageAttachment(hatchery.icon, hatchery.shortName + '.png');
-        const embed = new MessageEmbed()
-            .setColor('#0084FF')
+        const embed = new YachiruEmbed()
             .setTitle(hatchery.name)
             .attachFiles(attachment)
             .setThumbnail('attachment://' + hatchery.shortName + '.png')
+            .addField('Ajuda:', `Use \`${this.prefix}chocar\` para chocar todos dragões da sua incubadora.`)
             .setFooter(author.tag, author.avatarIcon())
             .setTimestamp();
 
@@ -38,7 +38,7 @@ module.exports = class extends Command
         for (let i = 0; i < hatchery.slots; i++)
         {
             let egg = (incubator.eggs || [])[i];
-            let desc = `\`${i + 1}.\` **/// Slot vázio ///**`;
+            let desc = `\`${i + 1}.\` **Slot vázio.**`;
 
             if (egg) 
             {

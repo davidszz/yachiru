@@ -10,6 +10,7 @@ module.exports = class extends Command
             name: 'perfil',
             aliases: [ 'profile', 'p' ],
             description: 'Obtem o seu cartão de perfil.',
+            category: 'Misc',
             usage: '[usuário]',
             examples: [
                 '@Yachiru'

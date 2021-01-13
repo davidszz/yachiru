@@ -1,5 +1,4 @@
-const { MessageEmbed } = require('discord.js');
-const { Command, MiscUtils, DragonBattle, DragonsData, ArenaUtils, XPUtils } = require('../../');
+const { Command, DragonBattle, DragonUtils, YachiruEmbed, MiscUtils, DragonsData, ArenaUtils, XPUtils } = require('../../');
 
 const battleCooldown = 60 * 60000;
 
@@ -8,162 +7,153 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'battle',
-            aliases: [ 'batalhar', 'batalha' ],
+            name: 'batalhar',
+            aliases: [ 'battle', 'batalha' ],
             category: 'RPG',
             description: 'Inicie uma batalha da arena.'
         });
     }
 
     async run({ channel, author })
-    {
-        const self = this;
-
-        const fields = 'dragons equippedDragon arena xp level';
-        const userdata = await this.client.database.users.findOne(author.id, fields);
-        
+    {   
+        const userdata = await this.client.database.users.findOne(author.id, 'arena equippedDragon dragons money xp level');
         const arena = userdata.arena;
-        const dragons = userdata.dragons;
 
-        const level = arena.level || 1;
-        const wins = arena.wins || 0;
-
-        // if (arena.lastBattle)
-        // {
-        //     let remaining = Date.now() - arena.lastBattle;
-        //     if (remaining <= battleCooldown)
-        //     {
-        //         let formated = MiscUtils.shortDuration(battleCooldown - remaining, 2);
-        //         return channel.send(`Você precisa esperar \`${formated}\` antes de iniciar outra batalha.`);
-        //     }
-        // }
-
-        const equipped = dragons[userdata.equippedDragon];
-        if (userdata.equippedDragon == null || userdata.equippedDragon == -1 || !equipped)
+        if (arena.lastBattle)
         {
-            return channel.send(`Você não possui nenhum **dragão** equipado.`);
+            const time = Date.now() - arena.lastBattle;
+            if (time < battleCooldown)
+            {
+                const remaining = battleCooldown - time;
+                return channel.send(`Você deve esperar \`${MiscUtils.shortDuration(remaining, 2)}\` antes de batalhar novamente na arena.`);
+            }
         }
 
-        if (!equipped.level || equipped.level < 4)
+        if (userdata.equippedDragon == null)
         {
-            return channel.send(`É preciso um dragão de **nivel 4** no minímo para batalhar na arena.`);
+            return channel.send(`Você não possui **nenhum** dragão **equipado**.`);
         }
-
-        equipped.owner = author.id;
-        
-        const context = {
-            client: this.client,
-            channel,
-            user: author
-        };  
 
         await this.client.database.users.update(author.id, {
-            'arena.lastBattle': Date.now()
+            "arena.lastBattle": Date.now()
         });
 
-        const battle = new DragonBattle(context, equipped, arena.nextDrag);
-        battle.start()
-            .then(endEvent)
-            .catch(async (res) => {
-                const embed = new MessageEmbed()
-                    .setTitle('Batalha da arena cancelada')
-                    .setDescription('Sua batalha atual da arena foi cancelada pelo motivo: **mensagem da batalha apagada durando o progresso**')
-                    .setFooter(`Arena Nivel ${level} - Batalha ${ArenaUtils.nextBattleNum(wins + 1)}/10`, author.avatarIcon())
-                    .setTimestamp();
+        const player = await this.client.players.get(author.id);
+        const equipped = await player.dragons.equipped();
 
-                await this.client.database.users.update(author.id, {
-                    $unset: {
-                        'arena.lastBattle': ''
-                    }
-                });
-                channel.send(author, embed.setColor('#FF0000'));
-            });
+        const target = {
+            data: arena.nextDrag,
+            infos: DragonsData[arena.nextDrag.id]
+        };
 
-        async function endEvent(won = false)
-        {   
-            const dragon = DragonsData[equipped.id];
-            const nickname = equipped.nickname ? ` (${equipped.nickname})` : '';
+        target.infos.health = DragonUtils.healthLevel(target.data.level, target.infos.baseHealth);
+        target.infos.skills = DragonUtils.parseSkills(target.infos.skills, target.data.level);
 
-            const opponent = DragonsData[arena.nextDrag.id];
-            const opponentLevel = arena.nextDrag.level || 1;
+        const context = { 
+            client: this.client, 
+            channel, 
+            user: author 
+        };
 
-            if (!won)
-            {
-                const embed = new MessageEmbed()
-                    .setAuthor(author.tag, author.avatarIcon())
-                    .setTitle('Derrota na arena')
-                    .setDescription(
-                        `Seu **${dragon.name} lvl ${equipped.level}${nickname}** perdeu uma batalha contra um(a) **${opponent.name} lvl ${opponentLevel}** da **arena nivel ${level}**.`
-                    )
-                    .setFooter(`Batalhas: ${(arena.battles || 0) + 1} | Vitórias: ${wins} | Derrotas: ${(arena.battles || 0) - (wins - 1)}`, self.client.user.avatarIcon())
-                    .setTimestamp();
+        const battle = new DragonBattle(context, equipped, target);
+        const result = await battle.start()
+            .catch(e => e);
 
-                await self.client.database.users.update(author.id, {
-                    $inc: {
-                        'arena.battles': 1
-                    }
-                });
+        battle.message.del();
 
-                return channel.send(author, embed.setColor('#FF0000'));
-            }
-
-            const prizes = {
-                money: ArenaUtils.goldPrize(level, wins),
-                xp: ArenaUtils.xpPrize(level, wins)
-            };
-
-            const ids = Object.keys(DragonsData);
-            const nextLevel = (arena.nextDrag.level || 1) + (arena.level || 1);
-            const nextDragon = {
-                id: ids[Math.floor(Math.random() * ids.length)],
-                level: nextLevel >= 70 ? 70 : nextLevel
-            };
-
-            const update = {
+        const onLose = () => {
+            return this.client.database.users.update(author.id, {
                 $inc: {
-                    'arena.battles': 1,
-                    'arena.wins': 1,
-                    ...prizes
-                },
-                'arena.nextDrag': nextDragon
-            };
+                    "arena.battles": 1
+                }
+            });
+        }
 
-            if ((userdata.xp + prizes.xp) >= XPUtils.needsXp(userdata.level))
+        if (typeof result === 'string')
+        {
+            if (result == 'message deleted')
             {
-                let remainingXp = (userdata.xp + prizes.xp) - XPUtils.needsXp(userdata.level) || 0;
+                await this.client.database.users.update(author.id, {
+                    "arena.lastBattle": Date.now() - battleCooldown + 600000
+                });
 
-                update.$inc.xp = remainingXp;
-                update.$inc.level = 1;
+                return channel.send(`A mensagem da sua batalha foi deletada e sua batalha foi cancelada. Você deverá esperar **10** minutos para batalhar novamente.`);
             }
 
-            if ((wins + 1) % 10 == 0)
+            if (result == 'idle')
             {
-                update.$inc['arena.level'] = 1;
+                await onLose();
+                return channel.send(`${author}, você perdeu a batalha por ter ficado mais de **1 minuto** ausênte.`);
+            }
+        }
+        else 
+        {
+            if (!('win' in result))
+            {
+                return channel.send(`${author}, ocorreu um erro durante sua batalha: \`\`\`${result}\`\`\``);
             }
 
-            const prizeInfos = [
-                `**Dinheiro:** ${MiscUtils.formatCurrency(prizes.money)}`,
-                `**XP:** ${MiscUtils.formatNumber(prizes.xp)}`
-            ];
-
-            if ((wins + 1) % 10 == 0)
+            if (result.win)
             {
-                prizeInfos.push(`**NOVA ARENA NIVEL ${arena.level + 1} ALCANÇADA!**`);
+                const wonMoney = ArenaUtils.goldPrize(arena.level, arena.wins);
+                const wonXp = ArenaUtils.xpPrize(arena.level, arena.wins);
+                const nextArena = (arena.wins + 1) % 10 == 0;
+                
+                const prize = [
+                    `**Dinheiro:** ${MiscUtils.formatCurrency(wonMoney)}`,
+                    `**XP:** ${MiscUtils.formatNumber(wonXp, '.')}`
+                ];
+
+                if (nextArena)
+                {
+                    prize.push(`**NOVA ARENA NIVEL ${arena.level + 1}**`);
+                }
+
+                const winEmbed = new YachiruEmbed()
+                    .setTitle(`Você ganhou a batalha 🎉🎊`)
+                    .setDescription(`Parabéns ${author}!!! Você ganhou uma batalha na arena nivel **${arena.level}** contra um(a) **${target.infos.name} (lvl. ${target.data.level})**!`)
+                    .addField('Premiação:', prize, true)
+                    .setFooter(`${author.tag} possui ${arena.battles + 1} batalhas, ${arena.wins + 1} vitórias e ${arena.battles - arena.wins} derrotas.`, author.avatarIcon())
+                    .setTimestamp();
+                
+                const nextDragLevel = (nextArena ? arena.level + 1 : arena.level) * 4 + arena.wins;
+                const xpObj = XPUtils.updateXpJson(userdata.xp + wonXp, userdata.level);
+
+                const updateObj = {
+                    $inc: {
+                        "arena.battles": 1,
+                        "arena.wins": 1,
+                        "money": wonMoney
+                    },
+                    "arena.nextDrag": {
+                        id: Object.keys(DragonsData)[Math.floor(Math.random() * Object.keys(DragonsData).length)],
+                        level: nextDragLevel
+                    },
+                    ...xpObj
+                };
+
+                await this.client.database.users.update(author.id, updateObj);
+
+                if (nextArena)
+                {
+                    updateObj["arena.level"] = arena.level + 1;
+                }
+
+                channel.send(author, winEmbed);
             }
+            else 
+            {
+                await onLose();
+                
+                const loseEmbed = new YachiruEmbed()
+                    .setColor('#FF0000')
+                    .setTitle(`Você perdeu a batalha`)
+                    .setDescription(`${author} você perdeu uma batalha na arena nivel **${arena.level}** com seu dragão **${equipped.data.nickname || equipped.infos.name} (lvl. ${equipped.data.level})** para um(a) **${target.infos.name} (lvl. ${target.data.level})**!`)
+                    .setFooter(`${author.tag} possui ${arena.battles + 1} batalhas, ${arena.wins} vitórias e ${(arena.battles + 1) - arena.wins} derrotas.`, author.avatarIcon())
+                    .setTimestamp();
 
-            const embed = new MessageEmbed()
-                .setColor('#00FF00')
-                .setAuthor(author.tag, author.avatarIcon())
-                .setTitle(`Vitória na arena!`)
-                .setDescription(
-                    `Seu **${dragon.name} lvl ${equipped.level}${nickname}** venceu a sua **${(wins % 10) + 1}°** batalha na **Arena Nivel ${arena.level}**!`
-                )
-                .addField('Prêmiação recebida:', prizeInfos)
-                .setFooter(`Batalha contra ${opponent.name} lvl ${opponentLevel}`, self.client.user.avatarIcon())
-                .setTimestamp();
-
-            await self.client.database.users.update(author.id, update);
-            channel.send(author, embed);
+                channel.send(author, loseEmbed);
+            }
         }
     }
 }

@@ -40,7 +40,7 @@ module.exports = class CanvasTemplates
             infosDesc: '16px "Poppins"',
             xp: '13px "Poppins Medium"',
             rank: '16px "Poppins Medium"',
-            personalText: '13px "Poppins"'
+            personalText: '13px "Poppins", "Helvetica Neue", Helvetica, Arial, "Segoe UI", sans-serif'
         };
 
         var lightTheme = (value, def) => userDocument.lightTheme ? value : def;
@@ -217,6 +217,13 @@ module.exports = class CanvasTemplates
         ctx.fillStyle = colors.personalText;
         ctx.font = fonts.personalText;
         ctx.textAlign = 'left';
+        
+        while (ctx.measureText(personalText).width > (width - 85))
+        {
+            personalText = personalText.slice(0, -1);
+        }
+
+        if (!personalText.endsWith('"')) personalText += '"';
         ctx.fillText(personalText, 60, height - 11);
 
         return canvas.toBuffer();
@@ -242,9 +249,10 @@ module.exports = class CanvasTemplates
                 level: 'bold 72px "Open Sans"',
                 nickname: 'bold 20px "Open Sans"',
                 name: 'bold 20px "Open Sans"',
-                infos: 'bold 22px "Roboto"',
+                infos: 'bold 15px "Open Sans"',
                 gold: 'bold 25px "Roboto"',
                 food: '26px "Poetsen One"',
+                health: 'bold 20px "Roboto"',
                 description: '12px "Montserrat Light"'
             };
 
@@ -252,6 +260,7 @@ module.exports = class CanvasTemplates
                 level: '#f6ff00',
                 nickname: 'black',
                 name: 'white',
+                health: 'white',
                 infos: 'white',
                 gold: 'white',
                 food: 'black',
@@ -259,7 +268,7 @@ module.exports = class CanvasTemplates
             }
 
             // Informations
-            var { name, nickname, level, dragonImage, food, gold, elements, health, attack, defense } = infos;
+            var { name, nickname, level, dragonImage, food, gold, elements, health, skills, description } = infos;
 
             // Background
             const background = await loadImage('src/assets/images/dragon-info-bg.png');
@@ -298,16 +307,22 @@ module.exports = class CanvasTemplates
             }
 
             // Dragon Name
-            name = name.toUpperCase();
             ctx.font = fonts.name;
+            let nameLines = ctx.getTextLines(name.toUpperCase(), 200);
             ctx.textAlign = 'left';
             ctx.fillStyle = colors.name;
-            ctx.fillText(name, width - 247, 83);
+            
+            let nameY = 83;
+            for (let line of nameLines)
+            {
+                ctx.fillText(line, width - 247, nameY);
+                nameY += 22;
+            }
 
             // Dragon Description
             ctx.font = fonts.description;
             ctx.fillStyle = colors.description;
-            let descriptionLines = ctx.getTextLines('Se você não aguenta o calor, fique longe do Dragão de Chamas! Essa criatura temperamental é facilmente detonada, mas se acalma com a mesma rapidez e sempre sente um profundo remorso pelas coisas que queimou.', 200);
+            let descriptionLines = ctx.getTextLines(description || 'Sem descrição.', 200);
             
             let descX = width - 247;
             let descY = 165;
@@ -320,17 +335,25 @@ module.exports = class CanvasTemplates
             }
 
             // Dragon Infos
-            attack = MiscUtils.formatNumber(attack, '.');
-            defense = MiscUtils.formatNumber(defense, '.');
-            health = MiscUtils.formatNumber(health, '.');
+            health = MiscUtils.formatNumber(health, ',');
             ctx.font = fonts.infos;
             ctx.fillStyle = colors.infos;
-            /* Attack */
-            ctx.fillText(attack, width - 206, 315.5);
-            /* Defense */
-            ctx.fillText(defense, width - 206, 346);
+            /* Skills */
+            let skillsPosY = 317;
+            for (let skill of skills)
+            {
+                let img = await loadImage('src/assets/images/round_' + skill.element + '.png');
+                ctx.drawImage(img, width - 247, skillsPosY - 17, img.width / 2, img.height / 2)
+                ctx.fillText(skill.name.toUpperCase(0), width - 213, skillsPosY);
+
+                skillsPosY += 28;
+            }
             /* Health */
-            ctx.fillText(defense, width - 206, 378);
+            ctx.textAlign = 'right';
+            ctx.font = fonts.health;
+            ctx.fillStyle = colors.health;
+            ctx.fillText(health, 188, 43)
+            ctx.textAlign = 'left';
 
             // Gold by minute
             gold = MiscUtils.formatCurrency(gold);

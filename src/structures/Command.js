@@ -74,6 +74,15 @@ module.exports = class Command
 
                     args[i] = strHandle;
                 }
+
+                if (type === 'channel')
+                {
+                    const channelParam = new parameters.ChannelParameter(parameter);
+                    const channelHandle = await channelParam.handle(args[i], { guild, channel });
+                    if (!channelHandle) return;
+
+                    args[i] = channelHandle;
+                }
             }
         }
 

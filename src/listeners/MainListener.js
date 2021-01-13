@@ -18,7 +18,7 @@ class MainListener extends EventListener
 
             const activities = [
                 {
-                    name: `Shard ${this.shard.ids.toString()} | ${totalGuildCount} Guilds`,
+                    name: `Seu servidor está no shard ${this.shard.ids.toString()}`,
                     type: 'PLAYING'
                 },
                 {
@@ -59,6 +59,23 @@ class MainListener extends EventListener
             const command = this.commands.find(c => c.name.toLowerCase() === cmd || (c.aliases && c.aliases.includes(cmd)));
             if (command)
             {
+                if (!message.member.hasPermission('ADMINISTRATOR'))
+                {
+                    const commandsChannel = await this.database.guilds.findOne(message.guild.id, 'commandsChannel')
+                    .then(res => res.commandsChannel);
+
+                    if (commandsChannel)
+                    {
+                        if (message.guild.channels.cache.get(commandsChannel))
+                        {
+                            if (message.channel.id != commandsChannel)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 this.runCommand(command, message, args);
             }
         }

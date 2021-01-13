@@ -11,6 +11,9 @@ module.exports = class extends Command
             description: 'Crie seu clã e avance no ranking de clãs.',
             category: 'Clans',
             usage: '<tag> <nome>',
+            maintence: true,
+            hidden: true,
+            developer: true,
             examples: [
                 'DCC Discord Community'
             ],

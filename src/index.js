@@ -17,6 +17,9 @@ module.exports = {
     EventListener: require('./structures/EventListener'),
     DragonBattle: require('./structures/DragonBattle'),
     CommandError: require('./structures/CommandError'),
+    Player: require('./structures/Player'),
+    PlayerManager: require('./structures/PlayerManager'),
+    YachiruEmbed: require('./structures/YachiruEmbed'),
 
     // Data [BIN FILES]
     DragonsData: require('./assets/bin/data/dragons.json'),
@@ -25,4 +28,5 @@ module.exports = {
     HatcherysData: require('./assets/bin/data/hatcherys.json'),
     FarmsData: require('./assets/bin/data/farms.json'),
     StructuresData: require('./assets/bin/data/structures.json'),
+    ElementsData: require('./assets/bin/data/elements.json'),
 }

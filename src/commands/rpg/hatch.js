@@ -1,12 +1,12 @@
-const { Command, MiscUtils, EggsData } = require('../../');
+const { Command, MiscUtils, EggsData, XPUtils } = require('../../');
 
 module.exports = class extends Command 
 {
     constructor(...args)
     {
         super(...args, {
-            name: 'hatch',
-            aliases: [ 'chocar' ],
+            name: 'chocar',
+            aliases: [ 'hatch' ],
             category: 'RPG',
             description: 'Use para chocar todos os ovos da sua incubadora.'
         });
@@ -14,7 +14,7 @@ module.exports = class extends Command
 
     async run({ channel, author })
     {
-        const userdata = await this.client.database.users.findOne(author.id, 'incubator dragons');
+        const userdata = await this.client.database.users.findOne(author.id, 'incubator dragons xp level');
         
         const eggs = userdata.incubator.eggs || [];
         if (!eggs.length)
@@ -24,12 +24,14 @@ module.exports = class extends Command
 
         let hatchEggs = [];
         let soon = 0; 
+        let wonXp = 0;
 
         for (let egg of eggs)
         {
             if (egg.endsAt <= Date.now())
             {
                 hatchEggs.push(egg);
+                wonXp += EggsData[egg.id].hatchingXp;
             }
             else 
             {
@@ -57,11 +59,14 @@ module.exports = class extends Command
             });
         }
 
+        const xpJson = XPUtils.updateXpJson(wonXp + userdata.xp, userdata.level);
+
         await this.client.database.users.update(author.id, {
             dragons: newDragons,
-            'incubator.eggs': eggs.filter(x => !hatchEggs.includes(x))
+            'incubator.eggs': eggs.filter(x => !hatchEggs.includes(x)),
+            ...xpJson
         });
 
-        channel.send(`**${hatchEggs.length == eggs.length ? 'Todos' : hatchEggs.length}** ovos da sua incubadora foram chocados.`);
+        channel.send(`**${hatchEggs.length == eggs.length ? 'Todos' : hatchEggs.length}** ovos da sua incubadora foram chocados e você recebeu **${wonXp} XP**.`);
     }
 }

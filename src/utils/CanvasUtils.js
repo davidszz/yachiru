@@ -59,27 +59,37 @@ module.exports = class CanvasUtils
             let lines = [];
             let completeWord = '';
             
+            if (this.measureText(text).width <= maxWidth)
+            {
+                return [ text ];
+            }
+
             let words = text.split(/ +/g);
-            let width = 0;
 
             for (let i = 0; i < words.length; i++)
             {
                 let word = words[i];
-                completeWord += ' ';
-
+                completeWord += completeWord ? ' ' : '';
+                
                 let wordWidth = this.measureText(word).width;
                 let currentWidth = this.measureText(completeWord).width;
 
                 if ((currentWidth + wordWidth) >= maxWidth)
                 {
                     lines.push(completeWord.trim().trimEnd());
-                    completeWord = '';
-                    width = 0;
+                    completeWord = word;
+                    if ((i + 1) == words.length)
+                    {
+                        lines.push(completeWord);
+                    }
                 }
                 else 
                 {
-                    width = currentWidth + wordWidth;
                     completeWord += word;
+                    if (words[i + 1] == null)
+                    {
+                        lines.push(completeWord);
+                    }
                 }
             }
 

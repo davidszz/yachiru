@@ -5,8 +5,8 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'use',
-            aliases: [ 'usar' ],
+            name: 'usar',
+            aliases: [ 'use' ],
             category: 'RPG',
             description: 'Usa um item do seu inventário.',
             usage: '<item>',
@@ -25,7 +25,7 @@ module.exports = class extends Command
     async run({ channel, author }, [ name, ...args ])
     {
         name = name + ' ' + args.join(' ');
-        const userdata = await this.client.database.users.findOne(author.id, 'inventory incubator');
+        const userdata = await this.client.database.users.findOne(author.id, 'inventory incubator dragons');
 
         const allItems = Object.values(ItemsData).flat();
         const item = allItems.find(i => MiscUtils.sameString(i.name, name));
@@ -50,6 +50,21 @@ module.exports = class extends Command
             if (userEggs.length >= incubator.slots)
             {
                 return channel.send(`Você só pode chocar **${incubator.slots}** ovo${incubator.slots > 1 ? 's' : ''} por vez na sua incubadora.`);
+            }
+
+            const dragons = userdata.dragons
+                .filter(x => x.id == item.eggId);
+
+            if (dragons.length)
+            {
+                const hatcheryAmount = userEggs.filter(x => x.id == item.eggId).length;
+                const dragonsAmount = dragons.length;
+                const totalAmount = hatcheryAmount + dragonsAmount;
+
+                if (totalAmount >= 4)
+                {
+                    return channel.send(`Você só pode ter **4** dragões de cada no tipo no total.`);
+                }
             }
             
             let eggsInfo = EggsData[item.eggId];

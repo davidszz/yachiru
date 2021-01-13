@@ -6,9 +6,10 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'harvest',
-            aliases: [ 'colher', 'colheita' ],
+            name: 'colher',
+            aliases: [ 'harvest', 'colheita' ],
             description: 'Colha a plantação de suas fazendas.',
+            category: 'RPG',
             usage: '<id ou tudo>',
             examples: [
                 '1', 'tudo'

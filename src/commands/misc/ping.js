@@ -7,7 +7,8 @@ module.exports = class extends Command
         super(...args, {
             name: 'ping',
             aliases: [ 'ms', 'shards' ],
-            description: 'Obtem dados sobre a conexão de rede do bot.'
+            description: 'Obtem dados sobre a conexão de rede do bot.',
+            category: 'Misc'
         });
     }
 

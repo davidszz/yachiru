@@ -5,10 +5,10 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'sell',
-            aliases: [ 'vender' ],
+            name: 'vender',
+            aliases: [ 'sell' ],
             category: 'RPG',
-            description: 'Venda seus itens.',
+            description: 'Venda seus itens que estão no **inventário**.',
             usage: '<item> [quantidade: 1]',
             examples: [
                 'ovo de dragão de planta 3',

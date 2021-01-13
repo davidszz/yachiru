@@ -24,5 +24,5 @@ const Yachiru = require('./src/Yachiru.js');
 const client = new Yachiru(client_options);
 
 client.initialize();
-client.on('rateLimit', (...args) => console.log('rateLimit', ...args));
+// client.on('rateLimit', (...args) => console.log('rateLimit', ...args));
 //#endregion

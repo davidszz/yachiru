@@ -1,5 +1,4 @@
-const { MessageEmbed } = require('discord.js');
-const { Command, ItemsData, Constants, MiscUtils } = require('../../');
+const { Command, ItemsData, Constants, MiscUtils, YachiruEmbed } = require('../../');
 const Lang = require('../../lang/pt-BR.json');
 const Emojis = Constants.emojis;
 
@@ -8,8 +7,8 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'shop',
-            aliases: [ 'loja', 's' ],
+            name: 'loja',
+            aliases: [ 'shop', 's' ],
             category: 'RPG',
             description: 'Abre a loja de items do bot.',
             usage: '[categoria]',
@@ -57,8 +56,7 @@ module.exports = class extends Command
         }
         else
         {
-            const embed = new MessageEmbed()
-                .setColor('#0084FF')
+            const embed = new YachiruEmbed()
                 .setTitle('Categorias disponiveis:')
                 .setDescription([
                     `${Emojis.fire_egg} Ovos de Dragões`,
@@ -128,8 +126,7 @@ module.exports = class extends Command
         function embedCategory(category)
         {
             let items = ItemsData[category];
-            const embed = new MessageEmbed()
-                .setColor('#0084FF')
+            const embed = new YachiruEmbed()
                 .setAuthor(`Categoria ${Lang.itemsCategory[category] || category}`)
                 .addField('Informação:', `Para comprar algo da loja use \`${self.client.prefix}comprar <item> [quantidade: 1]\``)
                 .setFooter(author.tag, author.avatarIcon());

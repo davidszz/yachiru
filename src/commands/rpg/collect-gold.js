@@ -7,8 +7,8 @@ module.exports = class extends Command
     constructor(...args)
     {
         super(...args, {
-            name: 'collect',
-            aliases: [ 'collect-gold', 'coletar', 'coletar-ouro' ],
+            name: 'coletar',
+            aliases: [ 'collect-gold', 'collect', 'coletar-ouro' ],
             category: 'RPG',
             description: 'Colete o ouro de seus dragões.',
             usage: '<id ou tudo>',

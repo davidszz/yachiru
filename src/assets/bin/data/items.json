@@ -2,7 +2,7 @@
     "eggs": [
         {
             "id": "0001",
-            "name": "Ovo de Dragão de Fogo",
+            "name": "Ovo de Dragão de Chamas",
             "eggId": "0001",
             "dragonId": "0001",
             "price": 500,
@@ -11,7 +11,7 @@
         },
         {
             "id": "0002",
-            "name": "Ovo de Dragão de Água",
+            "name": "Ovo de Dragão do Mar",
             "eggId": "0002",
             "dragonId": "0002",
             "price": 500,
@@ -20,7 +20,7 @@
         },
         {
             "id": "0003",
-            "name": "Ovo de Dragão de Terra",
+            "name": "Ovo de Dragão da Terra",
             "eggId": "0003",
             "dragonId": "0003",
             "price": 500,
@@ -29,7 +29,7 @@
         },
         {
             "id": "0004",
-            "name": "Ovo de Dragão de Planta",
+            "name": "Ovo de Dragão da Natureza",
             "eggId": "0004",
             "dragonId": "0004",
             "price": 500,

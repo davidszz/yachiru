@@ -10,7 +10,7 @@ class UserRepository extends Repository
 
     parse(entity) 
     {
-        return {
+        return super.assign({
             level: 1,
             xp: 0,
             money: 0,
@@ -29,16 +29,14 @@ class UserRepository extends Repository
             },
             dragonFood: 0,
             farms: [],
-            equippedDragon: 9,
             badges: [],
             background: 1,
             personalText: '',
             lightTheme: false,
             job: {},
             lastDaily: 0,
-            lastMessage: 0,
-            ...(super.parse(entity) || {})
-        }
+            lastMessage: 0
+        }, super.parse(entity) || {});
     }
 }
 
