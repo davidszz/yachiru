@@ -67,10 +67,10 @@ class MainListener extends EventListener
                 }
             }
 
-            antiFlood.set(message.author.id, Date.now() + 3000);
+            antiFlood.set(message.author.id, Date.now() + 2000);
             this.setTimeout(() => {
                  antiFlood.delete(message.author.id);
-            }, 3000);
+            }, 2000);
 
             const [ cmdName, ...args ] = message.content.slice(usedPrefix.length).trim().split(/ +/g);
             
