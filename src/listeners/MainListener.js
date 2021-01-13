@@ -7,6 +7,8 @@ class MainListener extends EventListener
         super({
             events: [ 'ready', 'message' ]
         }, client);
+
+        this.antiFlood = new Map();
     }
 
     async onReady()
@@ -14,7 +16,6 @@ class MainListener extends EventListener
         let i = 0;
         const changeStatus = async () => {
             const shardGuildCount = await this.shard.fetchClientValues('guilds.cache.size');
-            const totalGuildCount = shardGuildCount.reduce((total, current) => total + current);
 
             const activities = [
                 {
@@ -53,6 +54,24 @@ class MainListener extends EventListener
 
         if (usedPrefix)
         {
+            let userFlood = this.antiFlood.get(message.author.id);
+            if (userFlood)
+            {
+                if (userFlood > Date.now())
+                {
+                    const total = parseInt((userFlood - Date.now()) / 1000);
+                    const time = total > 0 ? total : 'alguns';
+                    const format = total > 0 ? 'segundos' : 'milisegundos';
+
+                    return channel.send(`Espere **${time} ${format}** antes de usar outro comando.`);
+                }
+            }
+
+            this.antiFlood.set(message.author.id, Date.now() + 3000);
+            this.client.setTimeout(() => {
+                this.antiFlood.delete(message.author.id);
+            }, 3000);
+
             const [ cmdName, ...args ] = message.content.slice(usedPrefix.length).trim().split(/ +/g);
             
             const cmd = cmdName.trim().toLowerCase();
