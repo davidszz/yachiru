@@ -1,5 +1,7 @@
 const { EventListener } = require('../');
 
+const antiFlood = new Map();
+
 class MainListener extends EventListener 
 {
     constructor(client)
@@ -7,8 +9,6 @@ class MainListener extends EventListener
         super({
             events: [ 'ready', 'message' ]
         }, client);
-
-        this.antiFlood = new Map();
     }
 
     async onReady()
@@ -54,7 +54,7 @@ class MainListener extends EventListener
 
         if (usedPrefix)
         {
-            let userFlood = this.antiFlood.get(message.author.id);
+            let userFlood = antiFlood.get(message.author.id);
             if (userFlood)
             {
                 if (userFlood > Date.now())
@@ -67,9 +67,9 @@ class MainListener extends EventListener
                 }
             }
 
-            this.antiFlood.set(message.author.id, Date.now() + 3000);
-            this.client.setTimeout(() => {
-                this.antiFlood.delete(message.author.id);
+            antiFlood.set(message.author.id, Date.now() + 3000);
+            this.setTimeout(() => {
+                 antiFlood.delete(message.author.id);
             }, 3000);
 
             const [ cmdName, ...args ] = message.content.slice(usedPrefix.length).trim().split(/ +/g);
