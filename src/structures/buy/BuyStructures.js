@@ -54,7 +54,7 @@ module.exports = class BuyStructures
                 .filter(x => ItemsData.structures.find(s => s.id == x && s.templeId != null))
                 .reduce((p, n) => Number(n) > Number(p) ? Number(n) : Number(p), 0);
 
-            if (haveNum != null && structureNum > (haveNum + 1))
+            if (haveNum != null && structureNum > ((haveNum ? haveNum : 1012) + 1))
             {
                 const needTemples = ItemsData.structures
                     .filter(x => x.templeId && Number(x.id) < structureNum && !structures[x.id]);
