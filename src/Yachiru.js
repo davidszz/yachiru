@@ -91,7 +91,7 @@ class Yachiru extends Discord.Client
 
         if (command.developer || command.maintence)
         {
-            const developers = process.env.DEVELOPERS?.split(',').map(id => id.trim()) || [];
+            const developers = process.env.DEVELOPERS && process.env.DEVELOPERS.split(',').map(id => id.trim()) || [];
             if (!developers.includes(author.id))
             {
                 if (command.maintence)
