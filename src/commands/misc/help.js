@@ -28,7 +28,7 @@ module.exports = class extends Command
                 .setDescription([
                     `O prefixo do bot é \`${this.client.prefix}\` mas você pode usar também ${this.client.user.toString()} como prefixo.`,
                     `Use **\`${this.fullname} ${this.usage}\`** para informações detalhadas sobre um comando.`,
-                    `\u2022 Servidor de suporte: **[clique aqui](https://discord.gg/Zgf5mAdY)**`,
+                    `\u2022 Servidor de suporte: **[clique aqui](https://discord.gg/TGYkqpgK4h)**`,
                     `\u2022 Total de comandos: \`${this.client.commands.length}\``
                 ])
                 .setFooter(author.tag, author.avatarIcon())
