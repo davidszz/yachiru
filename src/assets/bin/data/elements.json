@@ -1,7 +1,8 @@
 {
     "fisic": [],
-    "fire": [ "plant" ],
+    "fire": [ "plant", "ice" ],
     "water": [ "fire" ],
     "earth": [ "water" ],
-    "plant": [ "earth" ]
+    "plant": [ "earth" ],
+    "ice": [ "plant" ]
 }

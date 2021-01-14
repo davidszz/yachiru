@@ -10,6 +10,7 @@ module.exports = class extends Command
             name: 'command-reload',
             aliases: [ 'r-command', 'c-reload', 'reload' ],
             usage: '[comando]',
+            category: 'Desenvolvedores',
             hidden: true,
             developer: true,
             parameters: [

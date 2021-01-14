@@ -35,6 +35,15 @@
             "price": 500,
             "sell": 100,
             "limit": 3
+        },
+        {
+            "id": "0005",
+            "name": "Ovo de Dragão de Gelo",
+            "eggId": "0005",
+            "dragonId": "0005",
+            "price": 15000,
+            "sell": 100,
+            "limit": 3
         }
     ],
     "farms": [

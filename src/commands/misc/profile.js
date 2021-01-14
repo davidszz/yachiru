@@ -51,6 +51,7 @@ module.exports = class extends Command
                 channel.send(`**${user.tag}** precisa digitar um pouco mais para que o perfil dele seja criado.`);
             }
 
+            channel.stopTyping();
             return;
         }
 

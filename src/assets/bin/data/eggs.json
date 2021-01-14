@@ -26,5 +26,19 @@
         "hatchingTime": 30,
         "hatchingXp": 50,
         "icon": "src/assets/images/dragons/plant-dragon-egg.png"
+    },
+    "0005": {
+        "name": "Ovo de Dragão de Gelo",
+        "elements": [ "ice" ],
+        "hatchingTime": 54000,
+        "hatchingXp": 100,
+        "icon": "src/assets/images/dragons/ice-dragon-egg.png"
+    },
+    "0006": {
+        "name": "Ovo de Dragão de Fogo Frio",
+        "elements": [ "ice", "fire" ],
+        "hatchingTime": 54000,
+        "hatchingXp": 100,
+        "icon": "src/assets/images/dragons/cool-fire-dragon-egg.png"
     }
 }

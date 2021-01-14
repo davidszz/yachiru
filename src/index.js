@@ -23,6 +23,7 @@ module.exports = {
 
     // Data [BIN FILES]
     DragonsData: require('./assets/bin/data/dragons.json'),
+    BadgesData: require('./assets/bin/data/badges.json'),
     ItemsData: require('./assets/bin/data/items.json'),
     EggsData: require('./assets/bin/data/eggs.json'),
     HatcherysData: require('./assets/bin/data/hatcherys.json'),

@@ -75,8 +75,6 @@
         "elements": [ "earth" ],
         "baseGold": 5,
         "baseHealth": 700,
-        "baseAttack": 100,
-        "baseDefense": 50,
         "icons": {
             "1": "src/assets/images/dragons/earth-dragon-baby.png",
             "10": "src/assets/images/dragons/earth-dragon-young.png",
@@ -110,8 +108,6 @@
         "elements": [ "plant" ],
         "baseGold": 5,
         "baseHealth": 500,
-        "baseAttack": 150,
-        "baseDefense": 200,
         "icons": {
             "1": "src/assets/images/dragons/plant-dragon-baby.png",
             "10": "src/assets/images/dragons/plant-dragon-young.png",
@@ -132,6 +128,72 @@
                 "name": "Explosão de folha",
                 "element": "plant",
                 "power": 101
+            }
+        ]
+    },
+    "0005": {
+        "name": "Dragão de Gelo",
+        "shortName": "ice-dragão",
+        "description": "Com as recentes mudanças climáticas, os superfrios Dragões de Gelo migraram para o Pólo Norte. Se você vir um em um lugar quente, encaminhe-o para a pista de gelo mais próxima e você terá um amigo para sempre.",
+        "category": "1",
+        "breedable": true,
+        "breedingTime": 32400,
+        "elements": [ "ice" ],
+        "baseGold": 5,
+        "baseHealth": 650,
+        "icons": {
+            "1": "src/assets/images/dragons/ice-dragon-baby.png",
+            "10": "src/assets/images/dragons/ice-dragon-young.png",
+            "20": "src/assets/images/dragons/ice-dragon-adult.png"
+        },
+        "skills": [
+            {
+                "name": "Chuva gelada",
+                "element": "ice",
+                "power": 195
+            },
+            {
+                "name": "Golpe Impressionante",
+                "element": "fisic",
+                "power": 215
+            },
+            {
+                "name": "Picos de Gelo",
+                "element": "ice",
+                "power": 255
+            }
+        ]
+    },
+    "0006": {
+        "name": "Dragão de Fogo Frio",
+        "shortName": "cool-fire-dragão",
+        "description": "Se você achou que as luzes do norte são incríveis, espere até ver este dragão voando por aí! É tão frio como o gelo e tão quente como o fogo e nunca se cansa de bufar e bufar.",
+        "category": "3",
+        "breedable": true,
+        "breedingTime": 32400,
+        "elements": [ "ice", "fire" ],
+        "baseGold": 10,
+        "baseHealth": 850,
+        "icons": {
+            "1": "src/assets/images/dragons/cool-fire-dragon-baby.png",
+            "10": "src/assets/images/dragons/cool-fire-dragon-young.png",
+            "20": "src/assets/images/dragons/cool-fire-dragon-adult.png"
+        },
+        "skills": [
+            {
+                "name": "Picos de Gelo",
+                "element": "ice",
+                "power": 225
+            },
+            {
+                "name": "Flamenjantes",
+                "element": "fire",
+                "power": 225
+            },
+            {
+                "name": "Tempestade de Neve",
+                "element": "ice",
+                "power": 280
             }
         ]
     }
