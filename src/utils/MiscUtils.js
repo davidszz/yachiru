@@ -48,7 +48,7 @@ class MiscUtils
             { value: 1E9, symbol: 'BI' },
             { value: 1E6, symbol: 'M' },
             { value: 1E3, symbol: 'k' },
-            { value: 1, symbol: '' }
+            { value: 0, symbol: '' }
         ];
 
         const regex = /\.0+$|(\.[0-9]*[1-9])0+$/;
