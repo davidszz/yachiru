@@ -22,6 +22,7 @@ module.exports = class Command
         this.guild = options.guild || '';
         this.canvas = options.canvas || false;
         this.prefix = client.prefix || process.env.PREFIX || 'y!';
+        this.new = options.new || false;
     }
 
     get fullname()

@@ -94,7 +94,7 @@ module.exports = class extends Command
             }
         }
 
-        const { price, name, xp = 0 } = item;
+        const { price, name } = item;
 
         const cost = price * amount;
         if (userdata.money < cost)
@@ -105,7 +105,6 @@ module.exports = class extends Command
         const update = {
             $inc: {
                 money: -cost,
-                xp: xp,
                 [`inventory.${id}.amount`]: amount
             }
         };

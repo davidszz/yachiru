@@ -1,4 +1,4 @@
-const { CommandError, Command } = require("../../..");
+const { CommandError } = require("../../..");
 
 module.exports = class Temple
 {

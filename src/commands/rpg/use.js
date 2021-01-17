@@ -28,20 +28,22 @@ module.exports = class extends Command
         });
     }
 
-    async run({ channel, author }, [ id ])
+    async run(message, [ id ])
     {
+        const { channel, author } = message;
+
         const userdata = await this.client.database.users.findOne(author.id, 'inventory hatchery temples dragons farms xp level');
         const inventory = userdata.inventory;
 
         if (!inventory[id])
         {
-            return channel.send(`Você não possui nenhum item com este id.`);
+            return message.reply(`você não possui nenhum item com este id.`);
         }
 
         const item = this.client.items.get(id);
         if (item.usable != null && !item.usable)
         {
-            return channel.send(`Este item não pode ser utilizado desta maneira.`);
+            return message.reply(`este item não pode ser utilizado desta maneira.`);
         }
 
         try 
@@ -63,7 +65,7 @@ module.exports = class extends Command
 
             if (xpJson && xpJson.level)
             {
-                channel.send(`${author}, você upou para o nível **${xpJson.level}**!`);
+                message.reply(`você upou para o nível **${xpJson.level}**!`);
             }
         }
         catch(err)

@@ -21,7 +21,6 @@
         "sell": 0,
         "xp": 100,
         "max": 1,
-        "requireItems": [ "1" ],
         "eggsLimit": 2
     },
     "56": {
@@ -34,7 +33,6 @@
         "sell": 0,
         "xp": 500,
         "max": 1,
-        "requireItems": [ "55" ],
         "eggsLimit": 3
     },
     "9": {

@@ -29,22 +29,29 @@ module.exports = class extends Command
                     `O prefixo do bot é \`${this.client.prefix}\` mas você pode usar também ${this.client.user.toString()} como prefixo.`,
                     `Use **\`${this.fullname} ${this.usage}\`** para informações detalhadas sobre um comando.`,
                     `\u2022 Servidor de suporte: **[clique aqui](https://discord.gg/TGYkqpgK4h)**`,
-                    `\u2022 Total de comandos: \`${this.client.commands.length}\``
+                    `\u2022 Total de comandos: \`${this.client.commands.filter(x => !x.hidden).length}\``
                 ])
                 .setFooter(author.tag, author.avatarIcon())
                 .setTimestamp();
 
-            const commands = this.client.commands;
+            const commands = this.client.commands.filter(x => !x.hidden);
             const categories = {};
             
             for (const command of commands)
             {
-                if (command.hidden) continue;
-
                 if (!categories[command.category])
                     categories[command.category] = [];
                     
                 categories[command.category].push(command);
+            }
+
+            const news = commands.filter(x => x.new);
+            if (news.length)
+            {
+                embed.addField(
+                    `Novo (${news.length}) <:newno:800437176860278815><:newvo:800437282439954432>`,
+                    news.map(x => `\`${x.name}\``).join(', ')
+                );
             }
 
             for (const category in categories)

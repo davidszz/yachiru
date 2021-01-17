@@ -20,7 +20,6 @@ class UserRepository extends Repository
             lightTheme: false,
             lastMessage: 0,
             hatchery: {
-                id: '1',
                 eggs: []
             },
             badges: [],
