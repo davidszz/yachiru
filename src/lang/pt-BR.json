@@ -3,9 +3,12 @@
         "ADMINISTRATOR": "Administrador",
         "BAN_MEMBERS": "Banir membros"
     },
-    "itemsCategory": {
-        "eggs": "Ovos de Dragões",
-        "structures": "Estruturas",
-        "farms": "Fazendas"
+    "items": {
+        "categories": {
+            "farms": "Fazendas",
+            "temples": "Templos",
+            "hatcherys": "Incubadoras",
+            "dragons": "Dragões"
+        }
     }
 }

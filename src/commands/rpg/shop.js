@@ -1,6 +1,8 @@
-const { Command, ItemsData, Constants, MiscUtils, YachiruEmbed } = require('../../');
-const Lang = require('../../lang/pt-BR.json');
+const { Command, YachiruEmbed, Lang, MiscUtils, Constants } = require('../../');
+const { alphaString, formatCurrency } = MiscUtils;
+
 const Emojis = Constants.emojis;
+const getReaction = Constants.reaction;
 
 module.exports = class extends Command 
 {
@@ -10,146 +12,166 @@ module.exports = class extends Command
             name: 'loja',
             aliases: [ 'shop', 's' ],
             category: 'RPG',
-            description: 'Abre a loja de items do bot.',
+            description: 'Abre a loja de itens do bot.',
             usage: '[categoria]',
             examples: [
-                'ovos de dragões'
+                'fazendas'
+            ],
+            parameters: [
+                {
+                    type: 'string',
+                    returnsLower: true
+                }
             ]
         });
     }
 
-    async run({ channel, author }, args)
+    async run({ channel, author }, [ category ])
     {
         const self = this;
+        const categories = this.client.items.categories;
 
-        const allItems = Object.entries(ItemsData)
-            .map(data => data[1])
-            .flat();
-
-        if (!allItems.length)
+        if (!category)
         {
-            return channel.send(`Não há **nenhum** item na loja até o momento.`);
-        }
+            const embed = new YachiruEmbed(author);
+            embed.setTitle('👜 Loja');
 
-        const userdata = await this.client.database.users.findOne(author.id, 'money');
-        const formatCurrency = MiscUtils.formatCurrency;
-
-        if (args.length)
-        {
-            const ctg = args.join(' ');
-
-            const langWords = Object.values(Lang.itemsCategory);
-            const langCursor = langWords.find(x => MiscUtils.sameString(x, ctg));
-
-            let category = ctg.toLowerCase();
-            if (langCursor)
+            for (const category in categories)
             {
-                category = Object.keys(Lang.itemsCategory)[langWords.indexOf(langCursor)];
+                const itemsAmount = categories[category];
+                embed.addDescription(`**${Lang.items.categories[category] || category}** (${itemsAmount})`);
             }
 
-            if (!ItemsData[category])
-            {
-                return channel.send('Nenhuma categoria foi encontrada.');
-            }
-            
-            return channel.send(embedCategory(category));
-        }
-        else
-        {
-            const embed = new YachiruEmbed()
-                .setTitle('Categorias disponiveis:')
-                .setDescription([
-                    `${Emojis.fire_egg} Ovos de Dragões`,
-                    `${Emojis.huge_farm} Fazendas`,
-                    `${Emojis.structures} Estruturas`,
-                    '',
-                    `**Saldo:** ${formatCurrency(userdata.money)}`
-                ])
-                .addField('Informação:', `Para comprar algo da loja use \`${this.client.prefix}comprar <item> [quantidade: 1]\`.`)
-                .setFooter(author.tag, author.avatarIcon());
+            embed.addDescription('');
+            embed.addDescription(`\`${this.fullname} ${this.usage}\` para ver os items de uma categoria.`);
 
-            channel.send(embed)
-                .then(async msg => {
-                    let emojis = [ Emojis.fire_egg, Emojis.huge_farm, Emojis.structures, Emojis.previous ];
-                    emojis = emojis.map(e => Constants.parseEmoji(e));
-
-                    for (let emoji of emojis)
-                        await msg.react(emoji).catch(e => e);
-
-                    const filter = (r, u) => u.id === author.id && Object.values(r.emoji).some(x => emojis.includes(x));
-                    const collector = msg.createReactionCollector(filter, { idle: 60000 });
-
-                    let mainPage = true;
-                    collector.on('collect', async (r, u) => {
-                        const emoji = emojis.includes(r.emoji.id) ? r.emoji.id : r.emoji.name;
-
-                        if (emoji == Constants.reaction('previous'))
-                        {
-                            if (!mainPage)
-                            {
-                                await msg.edit(embed)
-                                .catch(e => e);
-
-                                mainPage = true;
-                            }
-                        }
-                        else
-                        {
-                            if (mainPage)
-                            {
-                                const editMsg = (category) => msg.edit(embedCategory(category)).catch(err => err);
-                                mainPage = false;
-
-                                switch(emoji)
-                                {
-                                    case Constants.reaction('fire_egg'):
-                                        await editMsg('eggs');
-                                    break;
-
-                                    case Constants.reaction('huge_farm'):
-                                        await editMsg('farms');
-                                    break;
-                                    
-                                    case Constants.reaction('structures'):
-                                        await editMsg('structures');
-                                    break;
-                                }
-                            }
-                        }
-                        
-                        r.users.remove(u)
-                            .catch(e => e);
-                    });
-                });
+            return channel.send(author, embed);
         }
 
-        function embedCategory(category)
+        category = alphaString(category);
+        const langCategories = Object.values(Lang.items.categories)
+            .map(x => alphaString(x).toLowerCase());
+
+        const idx = langCategories.indexOf(category);
+        if (idx === -1)
         {
-            let items = ItemsData[category];
-            const embed = new YachiruEmbed()
-                .setAuthor(`Categoria ${Lang.itemsCategory[category] || category}`)
-                .addField('Informação:', `Para comprar algo da loja use \`${self.client.prefix}comprar <item> [quantidade: 1]\``)
-                .setFooter(author.tag, author.avatarIcon());
-            
-            if (items.length)
+            return channel.send(`Nenhuma categoria com esse nome foi encontrada.`);
+        }
+
+        category = Object.keys(Lang.items.categories)[idx];
+        const items = this.client.items.getCategoryItems(category)
+            .filter(x => x.avaliable == null || !!x.avaliable);
+
+        const categoria = Lang.items.categories[category] || category;
+        if (items.length < 1)
+        {
+            return channel.send(`A categoria **${categoria}** não possui items.`);
+        } 
+
+        var limit = 5;
+        var pages = Math.ceil(items.length / limit);
+        var page = 1;
+
+        var msg = await channel.send(paginatedEmbed(1));
+        if (pages <= 1) return;
+
+        var emojis = [ Emojis.back, Emojis.previous, Emojis.next, Emojis.skip, Emojis.times ];
+        emojis = emojis.map(x => Constants.parseEmoji(x));
+
+        for (const emoji of emojis)
+        {
+            await msg.react(emoji)
+                .catch(e => e);
+        }
+
+        const filter = (r, u) => u.id === author.id && Object.values(r.emoji).some(x => emojis.includes(x));
+        const collector = msg.createReactionCollector(filter, { idle: 60000 });
+
+        collector.on('collect', async (r, u) => {
+            const emoji = emojis.includes(r.emoji.id)
+                ? r.emoji.id : r.emoji.name;
+
+            if (emoji == getReaction('previous'))
             {
-                let description = [];
-                for (let item of items)
+                if (page - 1 >= 1)
                 {
-                    description.push(`\`${item.name}\` - ${formatCurrency(item.price || 0)}${item.sell ? ` | **Venda:** ${formatCurrency(item.sell)}` : ''}`);
+                    await msg.edit(paginatedEmbed(page - 1))
+                        .catch(e => e);
+                }
+            }
+
+            if (emoji == getReaction('next'))
+            {
+                if (page + 1 <= pages)
+                {
+                    await msg.edit(paginatedEmbed(page + 1))
+                        .catch(e => e);
+                }
+            }
+
+            if (emoji == getReaction('back'))
+            {
+                if (page > 1)
+                {
+                    await msg.edit(paginatedEmbed(1))
+                        .catch(e => e);
+                }
+            }
+
+            if (emoji == getReaction('skip'))
+            {
+                if (page < pages)
+                {
+                    await msg.edit(paginatedEmbed(pages))
+                        .catch(e => e);
+                }
+            }
+
+            if(emoji == getReaction('times'))
+            {
+                collector.stop();
+                return msg.del();
+            }
+            
+            r.users.remove(u)
+                .catch(e => e);
+        });
+
+        function paginatedEmbed(num)
+        {
+            page = num;
+            
+            const embed = new YachiruEmbed(author)
+            embed.setAuthor(`👜 Loja: ${categoria}`);
+
+            const calc = limit * num;
+            for (let i = calc - limit; i < calc; i++)
+            {
+                const item = items[i];
+                if (!item) continue;
+
+                const { id, name, price, sell, level } = item;
+
+                let itemDesc = `\`${id}\``;
+                itemDesc += ` **${name}**`;
+
+                if (level)
+                {
+                    itemDesc += ` - **Lvl. ${level}**`;
                 }
 
-                embed.setDescription([
-                    embed.description || '',
-                    ...description,
-                    '',
-                    `**Saldo:** ${MiscUtils.formatCurrency(userdata.money)}`
-                ]);
+                itemDesc += `\nPreço: \`${formatCurrency(price)}\``;
+
+                if (sell)
+                {
+                    itemDesc += ` \u2022 Venda: \`${formatCurrency(sell)}\``;
+                }
+                
+                embed.addDescription(itemDesc + '\n');
             }
-            else 
-            {
-                embed.setDescription(`Não há nenhum item nessa categoria até o momento.`);
-            }
+
+            embed.addDescription(`**Página ${num} de ${pages}**\n`);
+            embed.addDescription(`\`${self.prefix}comprar <id> [quantidade: 1]\` para comprar um item.`);
 
             return embed;
         }

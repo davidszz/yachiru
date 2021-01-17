@@ -1,9 +1,8 @@
-const { MessageEmbed } = require('discord.js');
-const { Command, MiscUtils, ItemsData, CommandError } = require('../../');
+const { Command, MiscUtils } = require('../../');
+const { formatCurrency } = require('../../utils/MiscUtils');
 const { alphaString } = MiscUtils;
-const BuyTypes = require('../../structures/buy');
 
-const isNum = (arg) => !isNaN(arg) && Number.isInteger(Number(arg));
+const isNum = (arg) => !isNaN(arg) && Number.isInteger(Number(arg)) && Number(arg) > 0;
 
 module.exports = class extends Command 
 {
@@ -13,123 +12,105 @@ module.exports = class extends Command
             name: 'comprar',
             aliases: [ 'buy' ],
             category: 'RPG',
-            description: 'Compra um item da loja.',
-            usage: '<item> [quantidade: 1]',
+            description: 'Compre items da loja.',
+            usage: '<id> [quantidade: 1]',
             examples: [
-                'ovo de dragão de fogo',
-                'ovo de dragão de agua 1'
+                '1',
+                '1 10'
+            ],
+            parameters: [
+                {
+                    type: 'string',
+                    validate: (val) => isNum(val),
+                    errors: {
+                        validate: 'Forneça o **id** de um item acima válido contendo **apenas números**.'
+                    },
+                    required: true
+                },
+                {
+                    type: 'string',
+                    validate: (val) => isNum(val),
+                    errors: {
+                        validate: 'A quantidade deve ser um **número** válido que não seja **zero**.'
+                    }
+                }
             ]
         });
     }
 
-    async run(message, args)
+    async run(message, [ id, amount = 1 ])
     {
-        const { channel, author, guild } = message;
+        const { channel, author } = message;
 
-        if (!args.length)
+        amount = Number(amount);
+
+        const item = this.client.items.get(id);        
+        if (!item)
         {
-            return channel.send(this.usageMessage(guild.me.displayHexColor));
-        }
-
-        const fields = 'money inventory farms structures incubator level';
-        const userdata = await this.client.database.users.findOne(author.id, fields);
-        const { money, inventory, farms, structures, incubator } = userdata;
-
-        const items_ = Object.values(ItemsData).flat();
-
-        const content = alphaString(args.join(' ')).toLowerCase();
-        const item = items_
-            .filter(i => content.startsWith(alphaString(i.name).toLowerCase()))
-            .reduce((p, n) => p.name ? (n.name.length >= p.name.length ? n : p) : n, {});
-
-        if (!item || !Object.keys(item).length)
-        {
-            return channel.send('Item não encontrado na loja.');
+            return channel.send(`Item não encontrado.`);
         }
 
         if (item.avaliable != null && !item.avaliable)
         {
-            return channel.send('Este item não esta a venda no momento.');
+            return channel.send(`Este item não pode ser **comprado**.`);
         }
 
-        let lastArg = content.slice(item.name.length).trim().split(/ +/g)[0];
-        let amount = 1;
-
-        if (lastArg)
-        {
-            amount = isNum(lastArg) ? parseInt(lastArg) : 0;
-        }
-
-        if (!amount)
-        {
-            return channel.send('Forneça uma quantidade **válida** acima de **0**.');
-        }
-
+        const userdata = await this.client.database.users.findOne(author.id, 'money level inventory farms');
+        const inventory = userdata.inventory;
+        
         if (item.level && userdata.level < item.level)
         {
-            return channel.send(`Você precisa estar no nível **${item.level}** ou superior para comprar este item.`);
+            return channel.send(`Este item só pode ser adquirido apartir do nivel **${item.level}**.`);
         }
 
-        if (item.limit)
+        if (item.max)
         {
-            const hasAmount = inventory[item.id] && inventory[item.id].amount || 0;
-            if ((amount + hasAmount) > item.limit)
+            let has = 0;
+            if (inventory[id])
             {
-                let remaining = item.limit - hasAmount;
-                if (remaining)
-                {
-                    return channel.send(`Você só pode comprar mais **${item.limit - hasAmount}x** deste item.`);
-                }
-                
-                return channel.send(`Você já possui o **máximo (${item.limit})** permitido deste item.`)
+                has += inventory[id].amount || 1;
+            }
+
+            switch(item.type)
+            {
+                case 'farm':
+                    for (let farm of userdata.farms)
+                    {
+                        if (farm.id == id)
+                            has++;
+                    }
+                break;
+            }
+
+            if (has >= item.max)
+            {
+                return channel.send(`Você já possui o **máximo** permitido deste item.`);
+            }
+
+            if ((amount + has) > item.max)
+            {
+                let remaining = item.max - has;
+                return channel.send(`Você só pode comprar mais **${remaining}x** deste item.`);
             }
         }
 
-        const cost = amount * item.price;
-        if (money < cost)
+        const { price, name, xp = 0 } = item;
+
+        const cost = price * amount;
+        if (userdata.money < cost)
         {
-            return channel.send(`Você não possui **${MiscUtils.formatCurrency(cost)}** para comprar **${amount}x ${item.name}**`);
+            return channel.send(`Você não possui **${formatCurrency(cost)}** para comprar **${amount}x ${name}**.`);
         }
 
-        const category = Object.keys(ItemsData)
-            .find(x => ItemsData[x].find(i => i.id == item.id));
-
-        const context = {
-            channel, author, guild, item, amount, cost
+        const update = {
+            $inc: {
+                money: -cost,
+                xp: xp,
+                [`inventory.${id}.amount`]: amount
+            }
         };
 
-        const data = {
-            farms, structures, inventory, incubator
-        };
-
-        try
-        {
-            const BuyType = new BuyTypes[category](this.client);
-            await BuyType.handle(context, data);
-            
-            channel.send(`Você comprou **${amount}x ${item.name}** por **${MiscUtils.formatCurrency(cost)}**`);
-        }
-        catch(err)
-        {
-            if (err instanceof CommandError)
-            {
-                if (err.message == 'EMBED_ERROR')
-                {
-                    channel.send(err.embed ? err.embed : 'Ocorreu um erro');
-                }
-                else 
-                {
-                    const embed = new MessageEmbed()
-                        .setAuthor('❌ Algo deu errado')
-                        .setDescription(err.message)
-
-                    message.yachiruReply(embed.setColor('#ff0000'));
-                }
-            }
-            else 
-            {
-                channel.send(`Ocorreu um erro: \`\`\`${err.toString()}\`\`\``);
-            }
-        }
+        await this.client.database.users.update(author.id, update);
+        channel.send(`Você comprou **${amount}x ${name}** por **${formatCurrency(cost)}**.\nOs items comprados na loja são redirecionados ao inventário do usuário.`);
     }
 }

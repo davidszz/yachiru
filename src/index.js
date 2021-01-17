@@ -1,4 +1,7 @@
 module.exports = {
+    // Lang
+    Lang: require('./lang/pt-BR.json'),
+
     // Utilities
     Utils: require('./utils/index'),
     FileUtils: require('./utils/FileUtils'),
@@ -20,14 +23,12 @@ module.exports = {
     Player: require('./structures/Player'),
     PlayerManager: require('./structures/PlayerManager'),
     YachiruEmbed: require('./structures/YachiruEmbed'),
+    ItemManager: require('./structures/ItemManager'),
+    DragonsManager: require('./structures/DragonsManager'),
 
     // Data [BIN FILES]
     DragonsData: require('./assets/bin/data/dragons.json'),
     BadgesData: require('./assets/bin/data/badges.json'),
     ItemsData: require('./assets/bin/data/items.json'),
-    EggsData: require('./assets/bin/data/eggs.json'),
-    HatcherysData: require('./assets/bin/data/hatcherys.json'),
-    FarmsData: require('./assets/bin/data/farms.json'),
-    StructuresData: require('./assets/bin/data/structures.json'),
-    ElementsData: require('./assets/bin/data/elements.json'),
+    ElementsData: require('./assets/bin/data/elements.json')
 }

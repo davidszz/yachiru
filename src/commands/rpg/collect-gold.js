@@ -1,4 +1,4 @@
-const { Command, DragonsData, MiscUtils, DragonUtils } = require('../..');
+const { Command, MiscUtils, DragonUtils } = require('../..');
 
 const isNum = (str) => !isNaN(str) && Number(str) > 0 && Number.isInteger(Number(str));
 
@@ -8,9 +8,9 @@ module.exports = class extends Command
     {
         super(...args, {
             name: 'coletar',
-            aliases: [ 'collect-gold', 'collect', 'coletar-ouro' ],
+            aliases: [ 'collect' ],
             category: 'RPG',
-            description: 'Colete o ouro de seus dragões.',
+            description: 'Colete o dinheiro produzido por seus dragões.',
             usage: '<id ou tudo>',
             examples: [ '1', 'tudo' ],
             parameters: [
@@ -39,92 +39,62 @@ module.exports = class extends Command
 
         if (words.includes(arg))
         {
-            let updated = false;
-            let toCollect = [];
-            for (const idx in userdata.dragons)
-            {   
-                const dragon = userdata.dragons[idx];
+            var collected = 0;
+            var total = 0;
 
-                if (!dragon.lastCollectedGold)
-                {
-                    if (!updated) updated = true;
-                    
-                    dragon.lastCollectedGold = Date.now();
-                    userdata.dragons[idx] = dragon;
-                    
-                    continue;
-                }
+            for (const i in userdata.dragons)
+            {
+                const dragon = userdata.dragons[i];
 
-                const totalTime = Date.now() - dragon.lastCollectedGold || Date.now();
-                if (totalTime < 60000)
-                {
-                    continue;
-                }   
+                const gold = DragonUtils.totalGold(dragon);
+                if (gold < 1) continue;
 
-                const dragonInfos = DragonsData[dragon.id];
-                toCollect.push(DragonUtils.getTotalGold(dragon.lastCollectedGold, dragonInfos.baseGold, dragon.level || 1));
+                total++;
+                collected += gold;
 
                 dragon.lastCollectedGold = Date.now();
-                userdata.dragons[idx] = dragon;
-            }   
-
-            if (updated)
-            {
-                await this.client.database.users.update(author.id, {
-                    dragons: userdata.dragons
-                });
+                userdata.dragons[i] = dragon;
             }
 
-            if (!toCollect.length)
+            if (!total)
             {
-                return channel.send('Nenhum de seus **dragões** possuem dinheiro a ser coletado.');
+                return channel.send(`Nenhum de seus dragões possuem dinheiro a ser coletado.`);
             }
 
-            const collected = toCollect.reduce((p, n) => p + n);
             await this.client.database.users.update(author.id, {
-                dragons: userdata.dragons,
-                $inc: { money: collected }
-            });
-
-            return channel.send(`Você coletou **${MiscUtils.formatCurrency(collected)}** de **${toCollect.length}** dragões.`);
-        }
-            
-        const dragon = userdata.dragons[Number(arg) - 1];
-        if (!dragon)
-        {
-            return channel.send(`Nenhum dragão com o id **${arg}** foi encontrado.`);
-        }
-
-        const totalTime = Date.now() - dragon.lastCollectedGold;
-        if (isNaN(totalTime))
-        {
-            dragon.lastCollectedGold = Date.now();
-            userdata.dragons[Number(arg) - 1] = dragon;
-
-            await this.client.database.users.update(author.id, {
+                $inc: {
+                    money: collected
+                },
                 dragons: userdata.dragons
             });
 
-            return channel.send(`Esse dragão não possui **dinheiro** para coletar.`);
+            return channel.send(`Você coletou **${MiscUtils.formatCurrency(collected)}** de **${total}** dragões!`);
         }
 
-        if (totalTime < 60000)
+        const idx = Number(arg) - 1;
+        const dragon = userdata.dragons[idx];
+        
+        if (!dragon)
         {
-            return channel.send('Esse dragão não possui **dinheiro** para coletar.');
+            return channel.send(`Nenhum dragão com esse **id** foi encontrado.`);
         }
 
-        const dragonInfos = DragonsData[dragon.id];
-        const collectTotal = DragonUtils.getTotalGold(dragon.lastCollectedGold, dragonInfos.baseGold, dragon.level || 1);
+        const gold = DragonUtils.totalGold(dragon);
+        if (gold < 1)
+        {
+            return channel.send(`Esse dragão não possui **dinheiro** a ser coletado.`);
+        }
 
         dragon.lastCollectedGold = Date.now();
-        userdata.dragons[Number(arg) - 1] = dragon;
+        userdata.dragons[idx] = dragon;
 
         await this.client.database.users.update(author.id, {
-            dragons: userdata.dragons,
-            $inc: { money: collectTotal }
+            $inc: {
+                money: gold
+            },
+            dragons: userdata.dragons
         });
 
-        const nickname = dragon.nickname || dragonInfos.name;
-        channel.send(`Você coletou **${MiscUtils.formatCurrency(collectTotal)}** do(a) seu dragão **${nickname} \`${arg}\`**.`);
+        channel.send(`Você coletou **${MiscUtils.formatCurrency(gold)}** do seu dragão com o id **${arg}**!`);
     }
 }

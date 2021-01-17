@@ -1,4 +1,6 @@
 const ElementsData = require('../assets/bin/data/elements.json');
+const DragonsData = require('../assets/bin/data/dragons.json');
+const ItemsData = require('../assets/bin/data/items.json');
 
 module.exports = class DragonUtils
 {
@@ -37,25 +39,79 @@ module.exports = class DragonUtils
         return level <= 1 ? baseHealth : (15 * (Math.pow(level, 2)) + baseHealth);
     }
 
-    static goldMinute(level, baseGold)
+    static damageSize(element, defenseElement)
     {
-        return level < 5 ? baseGold : baseGold * Math.floor(level / 5);
+        let damage = 1;
+
+        if (defenseElement == element)
+            damage = 0;
+        else
+        {
+            let strongElements = ElementsData[element];
+            if (strongElements.includes(defenseElement))
+                damage = 2;
+            else 
+            {
+                let weakElements = ElementsData[defenseElement];
+                if (weakElements.includes(element))
+                    damage = .5;
+            }
+        }
+
+        return damage;
     }
 
-    static getTotalGold(time, baseGold, level)
+    static goldMinute(level, dragonId)
     {
-        return parseInt((Date.now() - time) / 60000) * DragonUtils.goldMinute(level, baseGold);
+        var dragon = DragonsData[dragonId];
+        var gold = dragon.baseGold;
+        
+        if (level > 10)
+        {
+            for (let i = 0; i < 10; i++)
+                gold += dragon.levelGold;
+
+            for (let i = 9; i < level; i++)
+                gold += (dragon.levelGold / 2);
+        }
+        else 
+        {
+            gold += (dragon.levelGold * level);
+        }
+
+        gold -= dragon.levelGold;
+        return gold;
+    }
+
+    static totalGold(data)
+    {
+        const computed = Date.now() - data.lastCollectedGold;
+        const gold = DragonUtils.goldMinute(data.level || 1, data.id);
+
+        return Math.floor(computed / 60000) * gold;
+    }
+
+    static highLevelTemple(temples)
+    {
+        let highLevel = 10;
+        for (const temple of temples)
+        {
+            const infos = ItemsData[temple.id];
+            if (!infos) continue;
+
+            const level = infos.maxDragonLevel || 0;
+            if (level > highLevel)
+            {
+                highLevel = level;
+            }
+        }
+
+        return highLevel;
     }
 
     static parseSkills(dragonSkills, level)
     {
-        let parsedSkills = [
-            {
-                name: 'Soco',
-                element: 'fisic',
-                power: DragonUtils.attackLevel(level, 68)
-            }
-        ];
+        let parsedSkills = [];
 
         for (let skills of dragonSkills)
         {

@@ -1,4 +1,6 @@
-const { Command, ItemsData, MiscUtils, HatcherysData, EggsData } = require('../../');
+const { MessageEmbed } = require('discord.js');
+const { Command, CommandError, XPUtils } = require('../../');
+const Uses = require('../../structures/commands/use');
 
 module.exports = class extends Command 
 {
@@ -9,98 +11,80 @@ module.exports = class extends Command
             aliases: [ 'use' ],
             category: 'RPG',
             description: 'Usa um item do seu inventário.',
-            usage: '<item>',
+            usage: '<id>',
             examples: [
-                'ovo de dragão de fogo'
+                '1011'
             ],
             parameters: [
                 {
                     type: 'string',
+                    validate: (val) => !isNaN(val) && Number(val) > 0 && Number.isInteger(Number(val)),
+                    errors: {
+                        validate: 'Forneça um id **válido** contendo **apenas números**.'
+                    },
                     required: true
                 }
             ]
         });
     }
 
-    async run({ channel, author }, [ name, ...args ])
+    async run({ channel, author }, [ id ])
     {
-        name = name + ' ' + args.join(' ');
-        const userdata = await this.client.database.users.findOne(author.id, 'inventory incubator dragons');
+        const userdata = await this.client.database.users.findOne(author.id, 'inventory hatchery temples dragons farms xp level');
+        const inventory = userdata.inventory;
 
-        const allItems = Object.values(ItemsData).flat();
-        const item = allItems.find(i => MiscUtils.sameString(i.name, name));
-
-        if (!item)
+        if (!inventory[id])
         {
-            return channel.send('Nenhum **item** foi encontrado.');
-        }
-        
-        if (!userdata.inventory[item.id])
-        {
-            return channel.send('Você **não possui** nenhuma unidade deste item.');
+            return channel.send(`Você não possui nenhum item com este id.`);
         }
 
-        const itemCategory = Object.keys(ItemsData).find(key => ItemsData[key].findIndex(i => i.id == item.id) > -1);
-        
-        if (itemCategory == 'eggs')
+        const item = this.client.items.get(id);
+        if (item.usable != null && !item.usable)
         {
-            if (!userdata.incubator.id)
-            {
-                return channel.send(`Você não possui nenhuma **incubadora**.`);
-            }
+            return channel.send(`Este item não pode ser utilizado desta maneira.`);
+        }
 
-            let incubator = HatcherysData[userdata.incubator.id];
-            let userEggs = userdata.incubator.eggs || [];
+        try 
+        {
+            const UseType = Uses[item.type];
+            const useItem = new UseType(this.client);
 
-            if (userEggs.length >= incubator.slots)
-            {
-                return channel.send(`Você só pode chocar **${incubator.slots}** ovo${incubator.slots > 1 ? 's' : ''} por vez na sua incubadora.`);
-            }
+            const xpJson = item.xp ? XPUtils.updateXpJson(userdata.xp + item.xp, userdata.level) : null;
 
-            const dragons = userdata.dragons
-                .filter(x => x.id == item.eggId);
-
-            if (dragons.length)
-            {
-                const hatcheryAmount = userEggs.filter(x => x.id == item.eggId).length;
-                const dragonsAmount = dragons.length;
-                const totalAmount = hatcheryAmount + dragonsAmount;
-
-                if (totalAmount >= 4)
-                {
-                    return channel.send(`Você só pode ter **4** dragões de cada no tipo no total.`);
-                }
-            }
-            
-            let eggsInfo = EggsData[item.eggId];
-            userEggs.push({
-                id: item.eggId,
-                endsAt: Date.now() + (eggsInfo.hatchingTime * 1000)
+            await useItem.handle({
+                channel, author, item,
+                inventory: userdata.inventory,
+                hatchery: userdata.hatchery,
+                dragons: userdata.dragons,
+                farms: userdata.farms,
+                temples: userdata.temples,
+                xpJson
             });
 
-            let updateObject = {
-                'incubator.eggs': userEggs
-            };
-
-            if (userdata.inventory[item.id].amount > 1)
+            if (xpJson && xpJson.level)
             {
-                updateObject['$inc'] = {
-                    [`inventory.${item.id}.amount`]: -1
-                }
+                channel.send(`${author}, você upou para o nível **${xpJson.level}**!`);
             }
-            else 
-            {
-                updateObject['$unset'] = {
-                    [`inventory.${item.id}`]: ''
-                }
-            }
-
-            await this.client.database.users.update(author.id, updateObject);
-            channel.send(`Você colocou um(a) **${item.name}** para chocar.`);
         }
-        else 
+        catch(err)
         {
-            channel.send('Este item não pode ser usado desta forma.');
+            if (!(err instanceof CommandError))
+            {
+                console.log(err);
+                return channel.send(`Ocorreu um erro: \`\`\`${err}\`\`\``);
+            }
+
+            if (err.message == 'EMBED_ERROR')
+            {
+                return channel.send(err.embed);
+            }
+
+            const embed = new MessageEmbed()
+                .setColor('#FF0000')
+                .setAuthor('❌ Oops! Algo deu errado')
+                .setDescription(err.message);
+
+            return channel.send(embed);
         }
     }
 }

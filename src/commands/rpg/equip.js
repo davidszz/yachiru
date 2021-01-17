@@ -24,44 +24,48 @@ module.exports = class extends Command
         });
     }
 
-    async run({ channel, author }, [ id ])
+    async run(message, [ id ])
     {
-        const userdata = await this.client.database.users.findOne(author.id, 'dragons equippedDragon level');
-        if (userdata.level < 5)
+        const author = message.author;
+
+        const dragons = await this.client.database.users.findOne(author.id, 'dragons')
+            .then(res => res.dragons);
+
+        if (!dragons.length)
         {
-            return channel.send(`Você precisa estar no minímo **5** antes de equipar um dragão.`);
+            return message.reply(`você não possui nenhum **dragão**.`);
         }
 
-        if (!userdata.dragons.length)
+        const idx = Number(id) -1;
+        const dragon = dragons[idx];
+
+        if (!dragon)
         {
-            return channel.send(`Você não possui **nenhum** dragão.`);
+            return message.reply(`nenhum dragão com esse **id** foi encontrado.`);
         }
 
-        id = Number(id);
-        let idx = id - 1;
-
-        if (!userdata.dragons[idx])
+        if (dragon.equipped)
         {
-            return channel.send(`Nenhum dragão com o id **${id}** foi encontrado.`);
+            return message.reply(`esse dragão já esta **equipado**.`);
         }
 
-        if (userdata.equippedDragon === idx)
-        {
-            return channel.send('Esse dragão **já está** equipado.');
-        }
-
-        const dragon = userdata.dragons[idx];
         if (dragon.level < 4)
         {
-            return channel.send(`Seu dragão precisa estar no level **4** ou superior para ser equipado.`);
+            return message.reply(`seu dragão deve estar no level **4** ou superior para ser equipado.`);
         }
-        
-        await this.client.database.users.update(author.id, {
-            equippedDragon: idx
-        });
 
-        const dragonInfos = DragonsData[dragon.id];
+        for (const dragon of dragons)
+        {
+            if (dragon.equipped)
+                delete dragon.equipped;
+        }
 
-        channel.send(`Você equipou seu **${dragon.nickname || dragonInfos.name} (lvl. ${dragon.level})** com o id **${id}** com sucesso!`);
+        dragon.equipped = true;
+        dragons[idx] = dragon;
+
+        const infos = this.client.dragons.get(dragon.id);
+
+        await this.client.database.users.update(author.id, { dragons });
+        message.reply(`você equipou seu(ua) **${infos.name}** com id **${id}**!`);
     }
 }

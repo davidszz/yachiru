@@ -1,4 +1,4 @@
-const { Command, MiscUtils, EggsData, XPUtils } = require('../../');
+const { Command, MiscUtils, XPUtils } = require('../../');
 
 module.exports = class extends Command 
 {
@@ -14,59 +14,71 @@ module.exports = class extends Command
 
     async run({ channel, author })
     {
-        const userdata = await this.client.database.users.findOne(author.id, 'incubator dragons xp level');
-        
-        const eggs = userdata.incubator.eggs || [];
-        if (!eggs.length)
-        {
-            return channel.send('Não possui nenhum **ovo** chocando na sua incubadora.');
-        }   
+        const userdata = await this.client.database.users.findOne(author.id, 'hatchery dragons xp level');
+        const hatchery = userdata.hatchery;
 
-        let hatchEggs = [];
-        let soon = 0; 
-        let wonXp = 0;
-
-        for (let egg of eggs)
+        if (!hatchery.id)
         {
-            if (egg.endsAt <= Date.now())
+            return channel.send('Você não tem nenhuma **incubadora**.');
+        }
+
+        if (!hatchery.eggs || !hatchery.eggs.length)
+        {
+            return channel.send(`Não há nenhum ovo chocando na sua incubadora.`);
+        }
+
+        var soon = 0;
+        var wonXp = 0;
+        var readyToHatch = [];
+
+        for (const egg of hatchery.eggs)
+        {
+            const dragon = this.client.dragons.get(egg.id);
+            const time = egg.hatchAt - Date.now();
+
+            if (time > 0)
             {
-                hatchEggs.push(egg);
-                wonXp += EggsData[egg.id].hatchingXp;
-            }
-            else 
-            {
-                if (!soon || soon > eggs.endsAt)
+                if (!soon || time < soon)
                 {
-                    soon = egg.endsAt;
+                    soon = time;
                 }
+                continue;
             }
+
+            wonXp += dragon.hatchXp;
+            readyToHatch.push(egg);
         }
 
-        if (!hatchEggs.length)
+        if (!readyToHatch.length)
         {
-            return channel.send(`Nenhum **ovo** da sua incubadora está pronto. O mais próximo chocará \`${MiscUtils.fromNow(soon)}\`.`);
+            return channel.send(`Nenhum ovo está pronto para ser chocado, aguarde... O mais próximo chocará em \`${MiscUtils.shortDuration(soon, 2)}\``);
         }
 
-
-        let newDragons = userdata.dragons || [];
-        for (let egg of hatchEggs)
+        const dragons = userdata.dragons;
+        for (const egg of readyToHatch)
         {
-            newDragons.push({
+            dragons.push({
                 id: egg.id,
                 level: 1,
-                lastCollectedGold: Date.now(),
-                foodStep: 1
+                foodStep: 0,
+                lastCollectedGold: Date.now()
             });
+
+            hatchery.eggs.splice(hatchery.eggs.indexOf(egg), 1);
         }
 
-        const xpJson = XPUtils.updateXpJson(wonXp + userdata.xp, userdata.level);
+        const xpObject = XPUtils.updateXpJson(userdata.xp + wonXp, userdata.level);
 
         await this.client.database.users.update(author.id, {
-            dragons: newDragons,
-            'incubator.eggs': eggs.filter(x => !hatchEggs.includes(x)),
-            ...xpJson
+            dragons,
+            'hatchery.eggs': hatchery.eggs,
+            ...xpObject
         });
 
-        channel.send(`**${hatchEggs.length == eggs.length ? 'Todos' : hatchEggs.length}** ovos da sua incubadora foram chocados e você recebeu **${wonXp} XP**.`);
-    }
+        channel.send(`Você chocou **${readyToHatch.length}** ovos e recebeu **${wonXp} XP**!`);
+        if (xpObject.level)
+        {
+            channel.send(`Você upou para o nível **${xpObject.level}**!`);
+        }
+    }   
 }

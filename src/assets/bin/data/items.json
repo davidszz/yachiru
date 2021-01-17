@@ -1,177 +1,194 @@
 {
-    "eggs": [
-        {
-            "id": "0001",
-            "name": "Ovo de Dragão de Chamas",
-            "eggId": "0001",
-            "dragonId": "0001",
-            "price": 500,
-            "sell": 100,
-            "limit": 3
-        },
-        {
-            "id": "0002",
-            "name": "Ovo de Dragão do Mar",
-            "eggId": "0002",
-            "dragonId": "0002",
-            "price": 500,
-            "sell": 100,
-            "limit": 3
-        },
-        {
-            "id": "0003",
-            "name": "Ovo de Dragão da Terra",
-            "eggId": "0003",
-            "dragonId": "0003",
-            "price": 500,
-            "sell": 100,
-            "limit": 3
-        },
-        {
-            "id": "0004",
-            "name": "Ovo de Dragão da Natureza",
-            "eggId": "0004",
-            "dragonId": "0004",
-            "price": 500,
-            "sell": 100,
-            "limit": 3
-        },
-        {
-            "id": "0005",
-            "name": "Ovo de Dragão de Gelo",
-            "eggId": "0005",
-            "dragonId": "0005",
-            "price": 15000,
-            "sell": 100,
-            "limit": 3
-        }
-    ],
-    "farms": [
-        {
-            "id": "1004",
-            "name": "Fazenda",
-            "farmId": "0001",
-            "price": 100
-        },
-        {
-            "id": "1005",
-            "name": "Fazenda Rara",
-            "farmId": "0002",
-            "price": 250,
-            "level": 5
-        },
-        {
-            "id": "1006",
-            "name": "Fazenda Épica",
-            "farmId": "0003",
-            "price": 1000,
-            "level": 8
-        },
-        {
-            "id": "1007",
-            "name": "Fazenda Grande",
-            "farmId": "0004",
-            "price": 25000,
-            "level": 20
-        },
-        {
-            "id": "1008",
-            "name": "Fazenda Mítica",
-            "farmId": "0005",
-            "price": 50000,
-            "level": 25
-        },
-        {
-            "id": "1009",
-            "name": "Fazenda Lendária",
-            "farmId": "0006",
-            "price": 200000,
-            "level": 30
-        },
-        {
-            "id": "1010",
-            "name": "Fazenda Enorme",
-            "farmId": "0007",
-            "price": 500000,
-            "level": 50
-        },
-        {
-            "id": "1011",
-            "name": "Fazenda Mágica",
-            "farmId": "0008",
-            "price": 1250000,
-            "level": 60
-        },
-        {
-            "id": "1012",
-            "name": "Fazenda Interestelar",
-            "farmId": "0009",
-            "price": 20000000,
-            "level": 70
-        }
-    ],
-    "structures": [
-        {
-            "id": "1001",
-            "name": "Incubadora Pequena",
-            "hatcheryId": "0001",
-            "price": 5000
-        },
-        {
-            "id": "1002",
-            "name": "Incubadora Média",
-            "hatcheryId": "0002",
-            "level": 15,
-            "price": 25000
-        },
-        {
-            "id": "1003",
-            "name": "Incubadora Grande",
-            "hatcheryId": "0003",
-            "level": 30,
-            "price": 200000
-        },
-        {
-            "id": "1013",
-            "name": "Templo Mágico",
-            "templeId": "0001",
-            "level": 15,
-            "price": 500000
-        },
-        {
-            "id": "1014",
-            "name": "Templo Nobre",
-            "templeId": "0002",
-            "level": 20,
-            "price": 1000000
-        },
-        {
-            "id": "1015",
-            "name": "Templo do Cavaleiro",
-            "templeId": "0003",
-            "level": 35,
-            "price": 2000000
-        },
-        {
-            "id": "1016",
-            "name": "Templo Mestre",
-            "templeId": "0004",
-            "level": 50,
-            "price": 5000000
-        },
-        {
-            "id": "1017",
-            "name": "Templo Épico",
-            "templeId": "0005",
-            "level": 60,
-            "price": 10000000
-        },
-        {
-            "id": "1018",
-            "name": "Templo das Maravilhas",
-            "templeId": "0006",
-            "level": 80,
-            "price": 25000000
-        }
-    ]
+    "1": {
+        "name": "Incubadora",
+        "type": "hatchery",
+        "category": "hatcherys",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 500,
+        "sell": 0,
+        "xp": 0,
+        "max": 1,
+        "eggsLimit": 1
+    },
+    "55": {
+        "name": "Incubadora Nivel 2",
+        "type": "hatchery",
+        "category": "hatcherys",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 100000,
+        "sell": 0,
+        "xp": 100,
+        "max": 1,
+        "requireItems": [ "1" ],
+        "eggsLimit": 2
+    },
+    "56": {
+        "name": "Incubadora Nivel 3",
+        "type": "hatchery",
+        "category": "hatcherys",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 1000000,
+        "sell": 0,
+        "xp": 500,
+        "max": 1,
+        "requireItems": [ "55" ],
+        "eggsLimit": 3
+    },
+    "9": {
+        "name": "Templo Mágico",
+        "type": "temple",
+        "category": "temples",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 500000,
+        "sell": 50000,
+        "xp": 250,
+        "level": 14,
+        "max": 1,
+        "icon": "src/assets/images/magic-temple.png",
+        "maxDragonLevel": 15
+    },
+    "10": {
+        "name": "Templo Nobre",
+        "type": "temple",
+        "category": "temples",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 1500000,
+        "sell": 150000,
+        "xp": 750,
+        "level": 25,
+        "max": 1,
+        "icon": "src/assets/images/noble-temple.png",
+        "requireItems": [ "9" ],
+        "maxDragonLevel": 20
+    },
+    "11": {
+        "name": "Templo do Cavaleiro",
+        "type": "temple",
+        "category": "temples",
+        "usable": true,
+        "buildingTime": 86400,
+        "price": 5000000,
+        "sell": 500000,
+        "xp": 2500,
+        "level": 30,
+        "max": 1,
+        "icon": "src/assets/images/knight-temple.png",
+        "requireItems": [ "10" ],
+        "maxDragonLevel": 25
+    },
+    "12": {
+        "name": "Templo Mestre",
+        "type": "temple",
+        "category": "temples",
+        "usable": true,
+        "buildingTime": 57600,
+        "price": 25000000,
+        "sell": 50000,
+        "xp": 12500,
+        "level": 35,
+        "max": 1,
+        "icon": "src/assets/images/master-temple.png",
+        "requireItems": [ "11" ],
+        "maxDragonLevel": 30
+    },
+    "16": {
+        "name": "Fazenda de Comida",
+        "type": "farm",
+        "category": "farms",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 100,
+        "sell": 50,
+        "xp": 10,
+        "max": 10,
+        "emoji": "<:small_farm:792881826963521568>",
+        "productionCooldown": 30,
+        "foodProduction": 5
+    },
+    "17": {
+        "name": "Fazenda de Comida Grande",
+        "type": "farm",
+        "category": "farms",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 25000,
+        "sell": 12500,
+        "xp": 50,
+        "max": 10,
+        "level": 8,
+        "emoji": "<:medium_farm:792881825885978655>",
+        "productionCooldown": 7200,
+        "foodProduction": 200
+    },
+    "18": {
+        "name": "Fazenda de Comida Enorme",
+        "type": "farm",
+        "category": "farms",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 500000,
+        "sell": 250000,
+        "xp": 250,
+        "max": 10,
+        "level": 18,
+        "emoji": "<:big_farm:792881826615263302>",
+        "productionCooldown": 32400,
+        "foodProduction": 10000
+    },
+    "1020": {
+        "name": "Dragão de Chamas",
+        "type": "dragon",
+        "category": "dragons",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 500,
+        "sell": 100,
+        "xp": 5
+    },
+    "1033": {
+        "name": "Dragão do Mar",
+        "type": "dragon",
+        "category": "dragons",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 500,
+        "sell": 100,
+        "xp": 5
+    },
+    "1011": {
+        "name": "Dragão de Terra",
+        "type": "dragon",
+        "category": "dragons",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 500,
+        "sell": 100,
+        "xp": 5
+    },
+    "1000": {
+        "name": "Dragão da Natureza",
+        "type": "dragon",
+        "category": "dragons",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 500,
+        "sell": 100,
+        "xp": 5
+    },
+    "1026": {
+        "name": "Dragão de Gelo",
+        "type": "dragon",
+        "category": "dragons",
+        "usable": true,
+        "buildingTime": 0,
+        "price": 15000,
+        "sell": 7500,
+        "xp": 5,
+        "level": 14
+    }
 }

@@ -1,4 +1,4 @@
-const { Command, FarmsData, MiscUtils } = require('../../');
+const { Command, MiscUtils } = require('../../');
 const XPUtils = require('../../utils/XPUtils');
 
 module.exports = class extends Command 
@@ -7,7 +7,7 @@ module.exports = class extends Command
     {
         super(...args, {
             name: 'colher',
-            aliases: [ 'harvest', 'colheita' ],
+            aliases: [ 'harvest' ],
             description: 'Colha a plantação de suas fazendas.',
             category: 'RPG',
             usage: '<id ou tudo>',
@@ -53,10 +53,10 @@ module.exports = class extends Command
                 return channel.send(`Nenhuma fazenda com o id **${num}** foi encontrada.`);
             }
             
-            const infos = FarmsData[farm.id];
-            if (!isAvaliable(farm, infos.cooldown))
+            const infos = this.client.items.get(farm.id);
+            if (!isAvaliable(farm, infos.productionCooldown))
             {
-                const remaining = (infos.cooldown * 1000) - (Date.now() - farm.lastHarvest);
+                const remaining = (infos.productionCooldown * 1000) - (Date.now() - farm.lastHarvest);
                 return channel.send(`Faltam \`${MiscUtils.shortDuration(remaining, 2)}\` para colheita desta fazenda.`);
             }
 
@@ -65,7 +65,7 @@ module.exports = class extends Command
 
             let updates = {
                 $inc: {
-                    dragonFood: infos.production || 0
+                    dragonFood: infos.foodProduction || 0
                 },
                 farms
             };
@@ -80,7 +80,7 @@ module.exports = class extends Command
 
             await this.client.database.users.update(author.id, updates);
 
-            channel.send(`Você colheu sua **${infos.name}** com id \`${num}\` e ganhou **${MiscUtils.formatNumber(infos.production)} 🍒** e **${infos.xp} XP**.`);
+            channel.send(`Você colheu sua **${infos.name}** com id \`${num}\` e ganhou **${MiscUtils.formatNumber(infos.foodProduction)} 🍒** e **${infos.xp} XP**.`);
         }
         else 
         {
@@ -92,14 +92,14 @@ module.exports = class extends Command
             for (let i = 0; i < farms.length; i++)
             {
                 let farm = farms[i];
-                let infos = FarmsData[farm.id];
+                let infos = this.client.items.get(farm.id);
 
-                if (!isAvaliable(farm, infos.cooldown))
+                if (!isAvaliable(farm, infos.productionCooldown))
                 {
                     let remaining = Date.now() - farm.lastHarvest;
                     if (!soon || soon > remaining)
                     {
-                        soon = (infos.cooldown * 1000) - remaining;
+                        soon = (infos.productionCooldown * 1000) - remaining;
                     }
 
                     continue;
@@ -108,7 +108,7 @@ module.exports = class extends Command
                 farm.lastHarvest = Date.now();
                 farms[i] = farm;
 
-                food += infos.production;
+                food += infos.foodProduction;
                 xp += infos.xp || 0;
                 collected++;
             }

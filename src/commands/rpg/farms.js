@@ -1,5 +1,7 @@
-const { Command, FarmsData, MiscUtils, Constants, YachiruEmbed } = require('../../');
+const { Command, MiscUtils, Constants, YachiruEmbed } = require('../../');
+
 const Emojis = Constants.emojis;
+const getReaction = Constants.reaction;
 
 module.exports = class extends Command 
 {
@@ -15,110 +17,114 @@ module.exports = class extends Command
 
     async run({ channel, author })
     {
-        const userdata = await this.client.database.users.findOne(author.id, 'farms');
-        const farms = userdata.farms;
+        const self = this;
+
+        const farms = await this.client.database.users.findOne(author.id, 'farms')
+            .then(res => res.farms);
 
         if (!farms.length)
         {
-            return channel.send('Você não possui **nenhuma** fazenda.');
+            return channel.send(`Você não possui nenhuma **fazenda**.`);
         }
 
-        var limit = 10;
+        var limit = 6;
         var pages = Math.ceil(farms.length / limit);
         var page = 1;
 
-        const embedPage = (num) => {
-            const embed = new YachiruEmbed()
-                .setTitle(`Suas fazendas (${farms.length})`)
-                .setDescription(`Para colher a plantação de alguma fazenda use \`${this.prefix}colher <id ou tudo>\`\n`)
-                .setFooter(author.tag + `${pages > 1 ? ` • Página ${num}/${pages}` : ''}`, author.avatarIcon())
-                .setTimestamp();
+        const msg = await channel.send(paginatedEmbed());
+        if (pages <= 1) return;
 
-            const sliceFarms = farms.slice((num * limit) - limit, num * limit);
-            for (const farm of sliceFarms)
+        const emojis = [ Emojis.back, Emojis.previous, Emojis.next, Emojis.skip, Emojis.times ]
+            .map(x => Constants.parseEmoji(x));
+
+        for (const emoji of emojis)
+        {
+            await msg.react(emoji).catch(e => e);
+        }
+
+        const filter = (r, u) => u.id === author.id && Object.values(r.emoji).some(x => emojis.includes(x));
+        const collector = msg.createReactionCollector(filter, { idle: 60000 });
+
+        collector.on('collect', async (r, u) => {
+            const emoji = emojis.includes(r.emoji.id)
+                ? r.emoji.id : r.emoji.name;
+
+            if (emoji == getReaction('previous'))
             {
-                let infos = FarmsData[farm.id];
-                if (!infos) continue;
-
-                let remaining = `${infos.production} 🍒`;
-                if (farm.lastHarvest)
+                if (page - 1 >= 1)
                 {
-
-                    let calc = Date.now() - farm.lastHarvest;
-                    let cooldown = infos.cooldown * 1000;
-                    
-                    if (calc < cooldown)
-                    {
-                        const char = '█';
-                        const progress = parseInt((calc / cooldown) * 10);
-
-                        remaining = MiscUtils.shortDuration(cooldown - calc, 2);
-                        // remaining += '`' + `[${char.repeat(progress)}${'.'.repeat(10 - progress)}]` + '`' + ` ${parseInt((calc / cooldown) * 100)}%`;
-                    }
+                    await msg.edit(paginatedEmbed(page - 1))
+                        .catch(e => e);
                 }
-                
-                embed.setDescription([
-                    embed.description || '',
-                    `\`${`${farms.indexOf(farm) + 1}.`.padStart(3, ' ')}\` ${infos.emoji} **${infos.name}** \u00BB \`${remaining}\``
-                ]);
             }
 
-            page = num;
-            return embed;
-        };
-
-        channel.send(embedPage(1))
-            .then(async msg => {
-                if (pages > 1)
+            if (emoji == getReaction('next'))
+            {
+                if (page + 1 <= pages)
                 {
-                    const reactions = [ Emojis.previous, Emojis.next ]
-                        .map(x => Constants.parseEmoji(x));
-
-                    for (const reaction of reactions) 
-                    {
-                        await msg.react(reaction).catch(e => e);
-                    }
-
-                    const filter = (r, u) => u.id === author.id && Object.values(r.emoji).some(x => reactions.includes(x));
-                    const collector = msg.createReactionCollector(filter, { idle: 60000 });
-
-                    collector.on('collect', async (r, u) => {
-                        const emoji = reactions.includes(r.emoji.name)
-                            ? r.emoji.name : r.emoji.id;
-
-                        if (emoji == Constants.reaction('previous'))
-                        {
-                            let calc = page - 1;
-                            if (calc >= 1)
-                            {
-                                await msg.edit(embedPage(calc))
-                                    .catch(e => e);
-                            }
-                            else 
-                            {
-                                await msg.edit(embedPage(pages))
-                                    .catch(e => e);
-                            }
-                        }
-                        else 
-                        {
-                            let calc = page + 1;
-                            if (calc <= pages)
-                            {
-                                await msg.edit(embedPage(calc))
-                                    .catch(e => e);
-                            }
-                            else 
-                            {
-                                await msg.edit(embedPage(1))
-                                    .catch(e => e);
-                            }
-                        }
-
-                        r.users.remove(u)
-                            .catch(e => e);
-                    });
+                    await msg.edit(paginatedEmbed(page + 1))
+                        .catch(e => e);
                 }
-            });
+            }
+
+            if (emoji == getReaction('back'))
+            {
+                if (page > 1)
+                {
+                    await msg.edit(paginatedEmbed(1))
+                        .catch(e => e);
+                }
+            }
+
+            if (emoji == getReaction('skip'))
+            {
+                if (page < pages)
+                {
+                    await msg.edit(paginatedEmbed(pages))
+                        .catch(e => e);
+                }
+            }
+
+            if(emoji == getReaction('times'))
+            {
+                collector.stop();
+                return msg.del();
+            }
+
+            r.users.remove(u)
+                .catch(e => e);
+        }); 
+
+        function paginatedEmbed(num = 1)
+        {
+            page = num;
+
+            const embed = new YachiruEmbed(author)
+                .setTitle(`Fazendas ${num} de ${pages}`)
+                .setDescription(`Para colher alguma plantação use \`${self.prefix}colher <id ou tudo>\`\n`)
+
+            const calc = limit * num;
+            for (let i = (calc - limit); i < calc; i++)
+            {
+                const farm = farms[i];
+                if (!farm) continue;
+
+                const { name, foodProduction, productionCooldown, emoji } = self.client.items.get(farm.id);
+
+                const time = Date.now() - farm.lastHarvest;
+                const remaining = (productionCooldown * 1000) - time;
+                const emoji_ = emoji ? `${emoji} ` : '';
+
+                const id = (i + 1).toString();
+
+                let desc = `\`${`${id}.`.padStart(farms.length.toString().length + 1, ' ')}\``;
+                desc += ` ${emoji_}**${name}** \u00BB`;
+                desc += ` \`${remaining > 0 ? MiscUtils.shortDuration(remaining, 2) : `${foodProduction} 🍒`}\``;
+
+                embed.addDescription(desc);
+            }
+
+            return embed;
+        }
     }
 }

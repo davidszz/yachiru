@@ -1,5 +1,4 @@
 const Badges = require('../assets/bin/data/badges.json');
-const Jobs = require('../assets/bin/data/jobs.json');
 
 module.exports = class FlagUtils
 {
@@ -32,10 +31,5 @@ module.exports = class FlagUtils
             .map(id => Badges[id]);
 
         return badges;
-    }
-
-    static getJob(id)
-    {
-        return Jobs[id] || null;
     }
 }

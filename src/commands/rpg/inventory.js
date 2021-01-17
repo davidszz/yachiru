@@ -1,4 +1,4 @@
-const { Command, ItemsData, YachiruEmbed } = require('../../');
+const { Command, YachiruEmbed, MiscUtils } = require('../../');
 
 module.exports = class extends Command 
 {
@@ -19,28 +19,22 @@ module.exports = class extends Command
 
         if (!Object.keys(inventory).length)
         {
-            return channel.send('Você não possui **nenhum** item em seu inventário.');
+            return channel.send('Você não possui nenhum item em seu inventário.');
         }
 
-        const embed = new YachiruEmbed()
-            .setAuthor(`Seu inventário`, author.avatarIcon())
-            .addField('Ajuda:', `Para usar um item use \`${this.client.prefix}usar <item>\``)
-            .setFooter(author.tag, author.avatarIcon())
-            .setTimestamp();
+        const embed = new YachiruEmbed(author);
+        embed.setTitle('Seu inventário');
 
-        const allItems = Object.values(ItemsData).flat();
-        const getItem = (id) => allItems.find(i => i.id == id);
-
-        for (const key in inventory)
+        for (const id in inventory)
         {
-            const infos = inventory[key];
-            const item = getItem(key);
+            const invItem = inventory[id];
+            const item = this.client.items.get(id);
 
-            embed.setDescription([
-                embed.description || '',
-                `**${item.name}:** \`${infos.amount || 1}\``
-            ]);
+            embed.addDescription(`\`${id}.\` ${item.name} **(${invItem.amount})**`);
         }
+
+        embed.addDescription('');
+        embed.addDescription(`**Dinheiro:** ${MiscUtils.formatCurrency(userdata.money)}`);
 
         channel.send(author, embed);
     }

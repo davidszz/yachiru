@@ -1,4 +1,5 @@
-const { Command, DragonUtils, StructuresData, MiscUtils } = require('../../');
+const { Command, DragonUtils, MiscUtils } = require('../../');
+const { formatNumber } = MiscUtils;
 
 module.exports = class extends Command 
 {
@@ -9,7 +10,7 @@ module.exports = class extends Command
             aliases: [ 'feed' ],
             category: 'RPG',
             description: 'Alimente um de seus dragões.',
-            usage: '<id>',
+            usage: '<id> max',
             examples: [
                 '1'
             ],
@@ -21,103 +22,131 @@ module.exports = class extends Command
                     errors: {
                         validate: 'Forneça um **id** válido acima de **0** contendo apenas números.'
                     }
+                },
+                {
+                    type: 'string',
+                    validate: (val) => ['max', 'máximo', 'maximo'].includes(val.toLowerCase()),
+                    errors: {
+                        validate: 'O último argumento deve ser **max** caso queira alimentar o seu dragão até o máximo.'
+                    }
                 }
             ]
         });
     }
 
-    async run({ channel, author }, [ id ])
+    async run(message, [ id, max ])
     {
-        const userdata = await this.client.database.users.findOne(author.id, 'dragonFood dragons structures level');
+        const { author } = message;
 
-        if (!userdata.dragonFood)
+        const userdata = await this.client.database.users.findOne(author.id, 'temples dragonFood dragons');
+
+        const idx = Number(id) - 1;
+        const dragon = userdata.dragons[idx];
+
+        if (!dragon)
         {
-            return channel.send('Você não possui nenhuma **ração** para alimentar dragões.');
+            return message.reply(`nenhum dragão com esse **id** foi encontrado.`);
         }
 
-        const dragonData = userdata.dragons[parseInt(id) - 1];
-        if (!dragonData)
-        {
-            return channel.send(`Nenhum dragão com o id **${id}** foi encontrado.`);
-        }
-
-        if (dragonData.level >= 70)
-        {
-            return channel.send(`Este dragão já alcançou o nivel **máximo**.`);
-        }
-
-        const nextFood = DragonUtils.nextFood(dragonData.level || 1);
-        const step = dragonData.foodStep || 1;
         const food = userdata.dragonFood;
-        const formatedCost = MiscUtils.formatNumber(nextFood);
-        
-        if (dragonData.level && dragonData.level >= 10)
+        const temples = userdata.temples;
+        const maxLevel = DragonUtils.highLevelTemple(temples);
+        const infos = this.client.dragons.get(dragon.id);
+
+        if (dragon.level >= 70)
         {
-            const templesData = Object.fromEntries(
-                Object.entries(userdata.structures)
-                    .filter(x => x[1].templeId != null)
-            );
+            return message.reply(`seu dragão já atingiu o nível **máximo**.`);
+        }
 
-            const temples = Object.fromEntries(
-                Object.entries(StructuresData)
-                    .filter(x => x[1].type == 'temple' && Object.values(templesData).find(t => t.templeId == x[0]))
-            );
+        if (dragon.level >= maxLevel)
+        {
+            return message.reply(`seu dragão já alcançou o nível **${maxLevel}**. Você não possui **templos** para upar acima de nível.`);
+        }
 
-            const maxLevel = Object.values(temples)
-                .reduce((p, n) => n.reachLevel > p ? n.reachLevel : p, 10);
+        const needsFood = DragonUtils.nextFood(dragon.level);
+        if (food < needsFood)
+        {
+            return message.reply(`você não possui **${formatNumber(needsFood)} 🍒** para alimentar seu dragão.`);
+        }
 
-            if (dragonData.level >= maxLevel)
+        if (max)
+        {
+            let food_ = food;
+            let newLevel = false;
+
+            while (food_ >= DragonUtils.nextFood(dragon.level)
+                && dragon.level < maxLevel
+                && dragon.level < 70)
             {
-                if (maxLevel < 40)
+                const needsFood = DragonUtils.nextFood(dragon.level);
+                if (dragon.foodStep == null)
                 {
-                    return channel.send(`Você só pode **upar** seu dragão até o nivel **${maxLevel}**. Para aumentar o limite compre **templos** na loja.`);
+                    dragon.foodStep = 0;
                 }
 
-                if (maxLevel >= 40 && userdata.level < 100)
+                if (dragon.foodStep >= 3)
                 {
-                    return channel.send(`Para upar seu dragão acima do nivel **${maxLevel}** é necessário estar **level 100**.`);
-                }   
+                    dragon.foodStep = 0;
+                    dragon.level++;
+                    newLevel = true;
+                }
+                else
+                {
+                    dragon.foodStep++;
+                }
+
+                food_ -= needsFood;
             }
+
+            userdata.dragons[idx] = dragon;
+            await this.client.database.users.update(author.id, {
+                dragons: userdata.dragons,
+                dragonFood: food_
+            });
+
+            if (newLevel)
+            {
+                return message.reply(`você alimentou seu dragão com **${formatNumber(food - food_)} 🍒** e upou ele para o nível **${dragon.level}**!`);
+            }
+            
+            return message.reply(`você alimentou seu dragão com **${formatNumber(food - food_)} 🍒**.`);
         }
 
-        if (food < nextFood)
+        if (dragon.foodStep == null)
         {
-            return channel.send(`Você não possui **🍒 ${formatedCost}** para alimentar esse dragão.`);
+            dragon.foodStep = 0;
         }
 
-        const updateObject = {};
-        if (food - nextFood <= 0)
+        let newLevel = false;
+        if (dragon.foodStep >= 3)
         {
-            if (!updateObject['$unset']) updateObject['$unset'] = {};
-            updateObject['$unset'][`dragonFood`] = '';
+            dragon.foodStep = 0;
+            dragon.level++;
+            newLevel = true;
         }
         else 
         {
-            if (!updateObject['$inc']) updateObject['$inc'] = {};
-            updateObject['$inc'][`dragonFood`] = -nextFood;
+            dragon.foodStep++;
         }
 
-        if (step + 1 > 4)
+        userdata.dragons[idx] = dragon;
+        
+        await this.client.database.users.update(author.id, {
+            dragons: userdata.dragons,
+            $inc: {
+                dragonFood: -needsFood
+            }
+        });
+
+        if (newLevel)
         {
-            dragonData.level = (dragonData.level || 1) + 1;
-            dragonData.foodStep = 1;
+            return message.reply(`você alimentou seu dragão com **${formatNumber(needsFood)} 🍒** e ele upou para o nível **${dragon.level}**.`);
         }
         else 
         {
-            dragonData.foodStep = step + 1;
+            return message.reply(`você deu **${formatNumber(needsFood)} 🍒** para seu dragão. (${dragon.foodStep}/4)`);
         }
 
-        userdata.dragons[parseInt(id) - 1] = dragonData;
-        updateObject['dragons'] = userdata.dragons;
 
-        await this.client.database.users.update(author.id, updateObject);
-        if (step + 1 > 4)
-        {
-            channel.send(`Você alimentou seu dragão com **🍒 ${formatedCost}** e ele passou para o nivel **${dragonData.level}**!`);
-        }
-        else 
-        {
-            channel.send(`Você alimentou seu dragão com **🍒 ${formatedCost}**. (${step}/4)`);
-        }
     }
 }

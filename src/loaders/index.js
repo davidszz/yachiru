@@ -2,5 +2,6 @@ module.exports = {
     ListenerLoader: require('./ListenerLoader'),
     CommandLoader: require('./CommandLoader'),
     DatabaseLoader: require('./DatabaseLoader'),
-    PlayerManagerLoader: require('./PlayerManagerLoader'),
+    PlayersLoader: require('./PlayersLoader'),
+    ItemsLoader: require('./ItemsLoader')
 }

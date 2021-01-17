@@ -1,5 +1,5 @@
 const { MessageAttachment } = require('discord.js');
-const { Command, HatcherysData, EggsData, MiscUtils, YachiruEmbed } = require('../..');
+const { Command, YachiruEmbed, MiscUtils } = require('../..');
 
 module.exports = class extends Command 
 {
@@ -15,49 +15,44 @@ module.exports = class extends Command
 
     async run({ channel, author })
     {
-        const userdata = await this.client.database.users.findOne(author.id, 'incubator');
-        
-        const incubator = userdata.incubator;
-        const hatchery = HatcherysData[incubator.id];
+        const userdata = await this.client.database.users.findOne(author.id, 'hatchery');
+        const hatchery = userdata.hatchery;
 
-        if (!hatchery)
+        if (!hatchery.id)
         {
-            return channel.send(`Você não possui nenhuma incubadora.`);
+            return channel.send(`Você não possui nenhuma **incubadora**.`);
         }
 
-        const attachment = new MessageAttachment(hatchery.icon, hatchery.shortName + '.png');
-        const embed = new YachiruEmbed()
-            .setTitle(hatchery.name)
-            .attachFiles(attachment)
-            .setThumbnail('attachment://' + hatchery.shortName + '.png')
-            .addField('Ajuda:', `Use \`${this.prefix}chocar\` para chocar todos dragões da sua incubadora.`)
-            .setFooter(author.tag, author.avatarIcon())
-            .setTimestamp();
+        const infos = this.client.items.get(hatchery.id);
+        const eggs = hatchery.eggs;
 
-        let occupied = 0;
-        for (let i = 0; i < hatchery.slots; i++)
+        const attachment = new MessageAttachment('src/assets/images/hatchery-1.png', 'hatchery.png');
+
+        const embed = new YachiruEmbed(author);
+        embed.attachFiles(attachment).setThumbnail('attachment://hatchery.png');
+        embed.setTitle(infos.name);
+        
+        for (let i = 0; i < infos.eggsLimit; i++)
         {
-            let egg = (incubator.eggs || [])[i];
-            let desc = `\`${i + 1}.\` **Slot vázio.**`;
+            const id = i + 1;
 
-            if (egg) 
+            const egg = eggs[i];
+            if (!egg)
             {
-                occupied++;
-
-                let eggInfos = EggsData[egg.id];
-                let calc = egg.endsAt - Date.now();
-
-                desc = `\`${i + 1}.\` **${eggInfos.name}** \u00BB \`${calc > 0 ? MiscUtils.shortDuration(calc) : 'Pronto ✔️'}\``;
+                embed.addDescription(`\`${id}.\` Vázio`);
+                continue;
             }
 
-            embed.setDescription([
-                embed.description || '',
-                desc
-            ]);
+            const dragon = this.client.dragons.get(egg.id);
+            const time = egg.hatchAt - Date.now();
+            const remaining = time > 0 ? MiscUtils.shortDuration(time, 2) : '`✔️`';
+
+            embed.addDescription(`\`${eggs.indexOf(egg) + 1}.\` **${dragon.name}** \u00BB \`${remaining}\``);
         }
 
-        embed.setTitle(embed.title + ` (${occupied}/${hatchery.slots})`);
+        embed.addDescription('');
+        embed.addDescription(`\`${this.prefix}chocar\` para chocar os ovos.`);
 
-        channel.send(author, embed);
+        channel.send(embed);
     }
 }

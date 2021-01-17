@@ -14,13 +14,13 @@ module.exports = class extends Command
 
     async run({ channel, author, guild })
     {
-        const userdata = await this.client.database.users.findOne(author.id, 'arena level');
+        const userdata = await this.client.database.users.findOne(author.id, 'arena level dragons');
         if (userdata.level < 5)
         {
             return channel.send(`Você precisa estar nivel **5** ou superior para vizualizar sua arena.`);
         }
-        const arena = userdata.arena;
 
+        const arena = userdata.arena;
         const attachment = new MessageAttachment('src/assets/images/arena-1.png', 'stadium.png');
 
         const embed = new YachiruEmbed()
@@ -33,10 +33,9 @@ module.exports = class extends Command
             .setTimestamp();
 
         const nextDragon = arena.nextDrag;
-        const ndInfos = DragonsData[nextDragon.id];
+        const ndInfos = this.client.dragons.get(nextDragon.id);
 
-        const player = await this.client.players.get(author.id);
-        const equipped = await player.dragons.equipped();
+        const equipped = userdata.dragons.find(x => x.equipped); 
 
         const { battles = 0, wins = 0, level = 1 } = arena;
         const loses = battles - wins;
@@ -68,13 +67,13 @@ module.exports = class extends Command
         let equippedInfos = `\`${this.prefix}equipar <id>\` para equipar um dragão.`;
         if (equipped)
         {
-            let { infos, data } = equipped;
+            let infos = this.client.dragons.get(equipped.id);
             let elements = infos.elements.map(x => Constants.emojis[`round_${x}`]);
 
             equippedInfos = [
-                `**${infos.name} (lvl. ${data.level})**`,
+                `**${infos.name} (lvl. ${equipped.level})**`,
                 `Elementos: ${elements.join('')}`,
-                `Vida: \`${infos.health}\``
+                `Vida: \`${DragonUtils.healthLevel(equipped.level, infos.baseHealth)}\``
             ];
         }
 

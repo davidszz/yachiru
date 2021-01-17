@@ -1,4 +1,4 @@
-const { Loader, PlayerManager } = require('../');
+const { Loader, PlayerManager } = require('..');
 
 module.exports = class PlayerManagerLoader extends Loader 
 {

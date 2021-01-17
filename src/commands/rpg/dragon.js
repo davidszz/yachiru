@@ -1,5 +1,5 @@
 const { MessageAttachment } = require('discord.js');
-const { Command, CanvasTemplates } = require('../../');
+const { Command, CanvasTemplates, DragonUtils } = require('../../');
 
 module.exports = class extends Command 
 {
@@ -34,31 +34,33 @@ module.exports = class extends Command
         channel.startTyping()
             .catch(e => e);
 
-        const player = await this.client.players.get(author.id);
-        const dragons = await player.dragons.all(true);
+        const path = '../../utils/CanvasTemplates.js';
+        delete require.cache[require.resolve(path)];
+        const CanvasTemplates = require(path);
+
+        const dragons = await this.client.database.users.findOne(author.id, 'dragons')
+            .then(res => res.dragons);
 
         id = parseInt(id);
-        let dragon = dragons[id - 1];
+        const dragon = dragons[id - 1];
         if (!dragon)
         {
             channel.stopTyping(true);
-            return channel.send(`Nenhum dragão com o id **${id}** foi encontrado.`);
+            return message.reply('nenhum dragão com esse id foi encontrado.');
         }   
 
-        const infos = dragon.infos;
-        const data = dragon.data;
+        const infos = this.client.dragons.get(dragon.id);
 
         const elements = infos.elements.map(el => `src/assets/images/${el}-element.png`);
-        const level = data.level;
+        const level = dragon.level;
 
         const dragonInfos = {
             name: infos.name,
-            nickname: data.nickname || null,
             elements,
             skills: infos.skills,
-            health: infos.health,
-            gold: infos.goldMinute,
-            food: infos.nextFood,
+            health: DragonUtils.healthLevel(level, infos.baseHealth),
+            gold: DragonUtils.goldMinute(level, dragon.id),
+            food: DragonUtils.nextFood(level),
             level,
             description: infos.description,
             dragonImage: infos.icons[(Object.keys(infos.icons).reduce((p, n) => Number(n) > Number(p) && Number(n) <= level ? n : p).toString())]

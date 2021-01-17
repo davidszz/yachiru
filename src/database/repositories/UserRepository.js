@@ -11,31 +11,39 @@ class UserRepository extends Repository
     parse(entity) 
     {
         return super.assign({
+            // User settings
             level: 1,
             xp: 0,
             money: 0,
-            dragons: [],
+            background: 1,
+            personalText: '',
+            lightTheme: false,
+            lastMessage: 0,
+            hatchery: {
+                id: '1'
+            },
+            badges: [],
+            job: {},
+            lastDaily: 0,
             inventory: {},
-            structures: {},
-            incubator: {},
+
+            // RPG: Dragons
+            dragons: [],
             arena: {
                 level: 1,
                 nextDrag: {
-                    id: '0001',
+                    id: '1020',
                     level: 4
                 },
                 battles: 0,
                 wins: 0
             },
             dragonFood: 0,
+
+            // RPG: Structures
+            incubator: {},
             farms: [],
-            badges: [],
-            background: 1,
-            personalText: '',
-            lightTheme: false,
-            job: {},
-            lastDaily: 0,
-            lastMessage: 0
+            temples: []
         }, super.parse(entity) || {});
     }
 }

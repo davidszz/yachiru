@@ -1,5 +1,5 @@
 const { MessageAttachment } = require('discord.js');
-const { Command, CanvasTemplates, StructuresData } = require('../../');
+const { Command, CanvasTemplates } = require('../../');
 
 module.exports = class extends Command 
 {
@@ -9,11 +9,17 @@ module.exports = class extends Command
             name: 'templos',
             aliases: [ 'temples' ],
             category: 'RPG',
-            description: 'Veja seus templos já adquiridos.',
+            description: 'Veja os templos que você possui.',
             usage: '[usuário]',
             canvas: true,
             examples: [
                 '@Wumpus'
+            ],
+            parameters: [
+                {
+                    type: 'user',
+                    acceptSelf: true
+                }
             ]
         });
     }
@@ -25,15 +31,11 @@ module.exports = class extends Command
 
         channel.startTyping()
             .catch(e => e);
-        const userdata = await this.client.database.users.findOne(target.id, 'structures');
-        const structures = userdata.structures;
 
-        const temples = Object.values(
-            Object.fromEntries(
-                Object.entries(StructuresData)
-                    .filter(x => x[1].type == 'temple' && Object.values(structures).find(c => c.templeId == x[0]))
-            )
-        ).map(x => x.icon);
+        const userdata = await this.client.database.users.findOne(target.id, 'temples');
+        const temples = userdata.temples
+            .sort((a, b) => a.id - b.id)
+            .map(x => this.client.items.get(x.id).icon);
 
         const buffer = await CanvasTemplates.temples(temples);
         const attachment = new MessageAttachment(buffer, 'temples.png');

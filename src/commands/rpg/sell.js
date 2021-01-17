@@ -1,4 +1,7 @@
-const { Command, ItemsData, MiscUtils } = require('../../');
+const { Command, MiscUtils } = require('../../');
+const { formatCurrency, formatNumber } = MiscUtils;
+
+const isNum = (val) => !isNaN(val) && Number.isInteger(Number(val)) && Number(val) > 0;
 
 module.exports = class extends Command 
 {
@@ -8,84 +11,75 @@ module.exports = class extends Command
             name: 'vender',
             aliases: [ 'sell' ],
             category: 'RPG',
-            description: 'Venda seus itens que estão no **inventário**.',
-            usage: '<item> [quantidade: 1]',
+            description: 'Venda seus itens!',
+            usage: '<id> [quantidade: 1]',
             examples: [
-                'ovo de dragão de planta 3',
-                'fazenda grande'
+                '1011',
+                '1011 2'
+            ],
+            parameters: [
+                {
+                    type: 'string',
+                    validate: (val) => isNum(val),
+                    errors: {
+                        validate: 'Por favor forneça um **id** válido de um item.'
+                    },
+                    required: true
+                },
+                {
+                    type: 'string',
+                    validate: (val) => isNum(val),
+                    errors: {
+                        validate: 'Forneça uma quantidade **válida** acima de **0**'
+                    }
+                }
             ]
         });
     }
 
-    async run({ channel, author }, args)
+    async run(message, [ id, amount = 1 ])
     {
-        if (!args.length)
-        {
-            return channel.send(this.usageMessage());
-        }
+        const author = message.author;
+        const { inventory } = await this.client.database.users.findOne(author.id, 'inventory');
 
-        const userdata = await this.client.database.users.findOne(author.id, 'inventory');
-        if (!userdata.inventory || !Object.keys(userdata.inventory).length)
-        {
-            return channel.send('Você não possui nenhum item em seu inventário.');
-        }
-
-        const allItems = Object.values(ItemsData).flat().filter(i => userdata.inventory[i.id]);
-        const fullArg = MiscUtils.alphaString(args.join(' ')).toLowerCase();
-
-        const item = allItems
-            .filter(i => fullArg.startsWith(MiscUtils.alphaString(i.name).toLowerCase()))
-            .reduce((p, n) => p.name ? (n.name.length >= p.name.length ? n : p) : n, {});
-
+        const item = inventory[id];
         if (!item)
         {
-            return channel.send('Nenhum item foi encontrado.');
+            return message.reply(`nenhum item foi encontrado com esse **id**.`);
         }
-
-        if (item.sell == null)
+        
+        const infos = this.client.items.get(id);
+        if (!infos.sell)
         {
-            return channel.send('Este item não pode ser vendido.');
+            return message.reply(`esse item não pode ser vendido.`);
         }
 
-        let remainingArgs = fullArg.slice(item.name.length).trim();
-        let amount = 1;
-
-        if (remainingArgs)
+        amount = Number(amount);
+        if (!item.amount || amount > item.amount)
         {
-            amount = !isNaN(remainingArgs) && Number(remainingArgs) > 0 && Number.isInteger(Number(remainingArgs)) ? Number(remainingArgs) : 0;
-            if (!amount)
-            {
-                return channel.send('Forneça uma quantidade válida acima de **0**.');
-            }
+            return message.reply(`você não tem **${amount}x** deste item.`);
         }
 
-        const itemAmount = userdata.inventory[item.id].amount || 1;
-        if (amount > itemAmount)
-        {
-            return channel.send(`Você não possui **${amount}** deste item.`);
-        }
-
-        const sellingTotal = parseInt(item.sell * amount);
-        const updateItem = {};
-
-        if (amount == itemAmount)
-        {
-            updateItem.$unset = {};
-            updateItem.$unset[`inventory.${item.id}`] = '';
-        }
-        else 
-        {
-            updateItem.$inc = {};
-            updateItem.$inc[`inventory.${item.id}.amount`] = -amount;
-        }
-
-        await this.client.database.users.update(author.id, {
+        const earned = parseInt(amount * infos.sell);
+        
+        const update = {
             $inc: {
-                money: sellingTotal
-            },
-            ...updateItem
-        });
+                money: earned
+            }
+        };
 
-        channel.send(`Você vendeu **${amount == itemAmount ? 'todos(as)' : amount} ${item.name}** por **${MiscUtils.formatCurrency(sellingTotal)}**.`);
+        if (!(item.amount - amount))
+        {
+            update['$unset'] = {
+                [`inventory.${id}`]: ''
+            };
+        }
+        else    
+        {
+            update['$inc'][`inventory.${id}.amount`] = -amount
+        }
+
+        await this.client.database.users.update(author.id, update);
+        message.reply(`você vendeu **${amount}x ${infos.name}** por **${formatCurrency(earned)}**!`);
     }
 }

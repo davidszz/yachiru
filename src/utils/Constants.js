@@ -1,8 +1,11 @@
 module.exports = {
     emojis: {
         question: "❓",
+        times: "❌",
         previous: "⬅️",
         next: "➡️",
+        skip: "⏭️",
+        back: "⏮️",
         fire_element: "<:fire_element:797350358338371645>",
         water_element: "<:water_element:797350855635632129>",
         earth_element: "<:earth_element:797350855778107413>",
@@ -15,7 +18,8 @@ module.exports = {
         round_ice: "<:round_ice:799125111256383558>",
         fire_egg: "<:fire_egg:792571716731797524>",
         huge_farm: "<:big_farm:792881826615263302>",
-        structures: "🏭"
+        structures: "🏭",
+        gold_bars: "<:golden_bar:797222014754488350>"
     },
     reaction: (name) => module.exports.emojis[name] 
         ? module.exports.parseEmoji(module.exports.emojis[name])

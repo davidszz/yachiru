@@ -67,7 +67,7 @@ module.exports = class CanvasTemplates
             clanTag: lightTheme('#5A523E', '#dedede')
         };
 
-        var { level, xp, money, badges, background, job, personalText, nextLevelXp, rank, border = 1, clan = 'Nenhum', clanTag } = userDocument;
+        var { level, xp, money, badges, background, personalText, nextLevelXp, rank, dragons, food, border = 1, clanTag } = userDocument;
         var username = user.username;
         var discriminator = `#${user.discriminator}`;
         var avatar = await loadImage(user.displayAvatarURL({ format: 'png', size: 128 }));
@@ -192,20 +192,20 @@ module.exports = class CanvasTemplates
         ctx.textAlign = 'center';
         // Money:
         ctx.fillText('DINHEIRO:', 90, 265);
-        // Job:
-        ctx.fillText('TRABALHO:', width / 2, 265);
-        // Clan:
-        ctx.fillText('CLÃ ATUAL:', width - 90, 265);
+        // Food:
+        ctx.fillText('COMIDA:', width / 2, 265);
+        // Dragons:
+        ctx.fillText('DRAGÕES:', width - 90, 265);
 
         // Infos Descriptions
         ctx.font = fonts.infosDesc;
         ctx.fillStyle = colors.infosDesc;
         // Money:
         ctx.fillText(money, 90, 285);
-        // Job:
-        ctx.fillText(job, width / 2, 285);
-        // Clan:
-        ctx.fillText(clan, width - 90, 285);
+        // Food:
+        ctx.fillText(MiscUtils.shortNumber(food, 3, ','), width / 2, 285);
+        // Dragons:
+        ctx.fillText(dragons, width - 90, 285);
 
         // Personal Text
         // Line:
@@ -237,8 +237,8 @@ module.exports = class CanvasTemplates
     {
         try 
         {
-            const width = 860;
-            const height = 550;
+            const width = 680;
+            const height = 435;
 
             const canvas = createCanvas(width, height);
             const ctx = canvas.getContext('2d');
@@ -246,14 +246,14 @@ module.exports = class CanvasTemplates
             ctx.imageSmoothingQuality = 'low';
 
             const fonts = {
-                level: 'bold 72px "Open Sans"',
+                level: 'bold 57px "Open Sans"',
                 nickname: 'bold 20px "Open Sans"',
-                name: 'bold 20px "Open Sans"',
-                infos: 'bold 15px "Open Sans"',
-                gold: 'bold 25px "Roboto"',
-                food: '26px "Poetsen One"',
+                name: 'bold 16px "Open Sans"',
+                infos: 'bold 10px "Open Sans"',
+                gold: 'bold 20px "Roboto"',
+                food: '20px "Poetsen One"',
                 health: 'bold 20px "Roboto"',
-                description: '12px "Montserrat Light"'
+                description: '10px "Montserrat Light"'
             };
 
             const colors = {
@@ -275,16 +275,30 @@ module.exports = class CanvasTemplates
             ctx.drawImage(background, 0, 0);
 
             // Dragon Image
+            let dgImageX = 0;
+            let dgImageY = 0;
+            if (dragonImage.endsWith('1.png'))
+            {
+                dgImageX = 150;
+                dgImageY = 240;
+            }
+            else
+            {
+                dgImageX = 46;
+                dgImageY = 134;
+            }
+            
             dragonImage = await loadImage(dragonImage);
-            ctx.drawImage(dragonImage, 37, 153);
+        
+            ctx.drawImage(dragonImage, dgImageX, dgImageY);
 
             // Draw level
             ctx.font = fonts.level;
             ctx.textAlign = 'center';
             ctx.fillStyle = 'rgba(0,0,0,0.6)';
-            ctx.fillText(level, 82, height - 63);
+            ctx.fillText(level, 65, height - 53);
             ctx.fillStyle = colors.level;
-            ctx.fillText(level, 82, height - 65);
+            ctx.fillText(level, 65, height - 55);
 
             // Dragon name tag
             if (nickname)
@@ -298,35 +312,35 @@ module.exports = class CanvasTemplates
             }
 
             // Dragon elements
-            let elementXPos = 35 + (elements.length * 17);           
+            let elementXPos = 32 + (elements.length * 14);           
             for (let element of elements)
             {
                 let image = await loadImage(element);
-                ctx.drawImage(image, width - elementXPos, 26, 12, 25);
-                elementXPos -= 17;
+                ctx.drawImage(image, width - elementXPos, 21, 9, 20);
+                elementXPos -= 14;
             }
 
             // Dragon Name
             ctx.font = fonts.name;
-            let nameLines = ctx.getTextLines(name.toUpperCase(), 200);
+            let nameLines = ctx.getTextLines(name.toUpperCase(), 155);
             ctx.textAlign = 'left';
             ctx.fillStyle = colors.name;
             
-            let nameY = 83;
+            let nameY = 66;
             for (let line of nameLines)
             {
-                ctx.fillText(line, width - 247, nameY);
-                nameY += 22;
+                ctx.fillText(line, width - 195, nameY);
+                nameY += 19;
             }
 
             // Dragon Description
             ctx.font = fonts.description;
             ctx.fillStyle = colors.description;
-            let descriptionLines = ctx.getTextLines(description || 'Sem descrição.', 200);
+            let descriptionLines = ctx.getTextLines(description || 'Sem descrição.', 160);
             
-            let descX = width - 247;
-            let descY = 165;
-            let descLineHeight = 14;
+            let descX = width - 195;
+            let descY = 126;
+            let descLineHeight = 12;
             
             for (let line of descriptionLines)
             {
@@ -339,34 +353,39 @@ module.exports = class CanvasTemplates
             ctx.font = fonts.infos;
             ctx.fillStyle = colors.infos;
             /* Skills */
-            let skillsPosY = 317;
+            let skillsPosY = 263;
+            ctx.filter = 'contrast(1.4) sepia(1)';
             for (let skill of skills)
             {
                 let img = await loadImage('src/assets/images/round_' + skill.element + '.png');
-                ctx.drawImage(img, width - 247, skillsPosY - 17, img.width / 2, img.height / 2)
-                ctx.fillText(skill.name.toUpperCase(0), width - 213, skillsPosY);
+                ctx.drawImage(img, width - 195, skillsPosY - 17, img.width / 2.5, img.height / 2.5)
+                if (skill.level && skill.level > level)
+                    ctx.fillStyle = '#FF0000';
+                ctx.fillText(skill.level && skill.level > level ? `DESBLOQUEIA LVL ${skill.level}` : skill.name.toUpperCase(0), width - 170, skillsPosY - 5);
+                if (skill.level && skill.level > level)
+                    ctx.fillStyle = '#FFFFFF';
 
-                skillsPosY += 28;
+                skillsPosY += 22;
             }
             /* Health */
             ctx.textAlign = 'right';
             ctx.font = fonts.health;
             ctx.fillStyle = colors.health;
-            ctx.fillText(health, 188, 43)
+            ctx.fillText(health, 308, 54)
             ctx.textAlign = 'left';
 
             // Gold by minute
             gold = MiscUtils.formatCurrency(gold);
             ctx.font = fonts.gold;
             ctx.fillStyle = colors.gold;
-            ctx.fillText(gold, width - 176.5, height - 88);
+            ctx.fillText(gold, width - 140, height - 70);
 
             // Food
             food = MiscUtils.shortNumber(food, 1);
             ctx.font = fonts.food;
             ctx.fillStyle = colors.food;
             ctx.textAlign = 'right';
-            ctx.fillText(food, width - 323, height - 46);
+            ctx.fillText(food, width - 255, height - 36);
 
             return canvas.toBuffer();
         }
@@ -378,80 +397,33 @@ module.exports = class CanvasTemplates
 
     static async temples(temples)
     {
-        const width = 800, 
-            height = 500;
+        const width = 500;
+        const height = 300;
 
         const canvas = createCanvas(width, height);
         const ctx = canvas.getContext('2d');
 
         let count = 0;
-        let posX = 103;
-        let posY = 141;
-        let badgeX = 219;
-        let badgeY = 115;
-        let space = 235;
+        let x = 58, y = 40;
 
         let background = await loadImage('src/assets/images/temples-background.png');
         ctx.drawImage(background, 0, 0);
 
-        let badge = await loadImage('src/assets/images/check-ball.png');
-
         for (let temple of temples)
         {
-            if (count == 3)
+            if (count >= 3)
             {
-                posY = 321;
-                badgeY = 295;
-                posX = 103;
-                badgeX = 219;
+                y += 130;
+                x = 58;
             }
-            
-            let image = await loadImage(temple);
-            ctx.drawImage(image, posX, posY, image.width / 2, image.height / 2);
-            ctx.drawImage(badge, badgeX, badgeY);
 
-            posX += space;
-            badgeX += (space);
+            console.log(x);;
+            let image = await loadImage(temple);
+            ctx.drawImage(image, x, y, 0.3 * image.width, 0.3 * image.height);
+
+            x += 155.5;
             count++;
         }
-
-        return canvas.toBuffer();
-    }
-
-    /**
-     * Create a incubator image
-     * @param {Array} eggs - The eggs progress document
-     */
-    static async incubator(eggs)
-    {
-        const width = 500, height = 500;
-
-        const canvas = createCanvas(width, height);
-        const ctx = canvas.getContext('2d');
-
-        const background = await loadImage('src/assets/images/incubator-1.png');
-        ctx.drawImage(background, 0, 0);
-        
-        const firstEgg = eggs[0];
-        var { id, icon, reamingTime, progress } = firstEgg;
-        
-        // Progress
-        progress = progress / 100;
-        ctx.fillStyle = '#ff0000';
-        ctx.roundRect(257, 291.25, 72 * progress, 6.5, 5).fill();
-
-        // Reaming
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 3;
-        ctx.font = '18px "Arial"';
-        ctx.strokeText(reamingTime, 257, 230);
-        ctx.fillText(reamingTime, 257, 230);
-
-        // Egg
-        let firstIcon = await loadImage(icon);
-        ctx.drawImage(firstIcon, 273, 242, 40, 40);
-
         return canvas.toBuffer();
     }
 }
