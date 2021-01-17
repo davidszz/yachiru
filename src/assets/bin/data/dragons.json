@@ -12,6 +12,7 @@
         "hatchXp": 50,
         "baseGold": 7,
         "levelGold": 5,
+        "maxGold": 5000,
         "baseHealth": 2000,
         "limit": 3,
         "icons": {
@@ -60,6 +61,7 @@
         "hatchXp": 50,
         "baseGold": 3,
         "levelGold": 2,
+        "maxGold": 7500,
         "baseHealth": 2000,
         "limit": 3,
         "icons": {
@@ -108,6 +110,7 @@
         "hatchXp": 50,
         "baseGold": 18,
         "levelGold": 12,
+        "maxGold": 1000,
         "baseHealth": 2000,
         "limit": 3,
         "icons": {
@@ -156,6 +159,7 @@
         "hatchXp": 50,
         "baseGold": 18,
         "levelGold": 12,
+        "maxGold": 10000,
         "baseHealth": 2000,
         "limit": 3,
         "icons": {
@@ -204,6 +208,7 @@
         "hatchXp": 250,
         "baseGold": 4,
         "levelGold": 3,
+        "maxGold": 15000,
         "baseHealth": 2600,
         "limit": 3,
         "icons": {

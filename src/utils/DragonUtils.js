@@ -88,7 +88,11 @@ module.exports = class DragonUtils
         const computed = Date.now() - data.lastCollectedGold;
         const gold = DragonUtils.goldMinute(data.level || 1, data.id);
 
-        return Math.floor(computed / 60000) * gold;
+        const times = Math.floor(computed / 60000);
+        const infos = DragonsData[data.id];
+        const max = infos.maxGold ? infos.maxGold : (720 * gold);
+
+        return times * gold > max ? max : times * gold;
     }
 
     static highLevelTemple(temples)
