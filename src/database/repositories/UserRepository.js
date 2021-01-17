@@ -20,7 +20,8 @@ class UserRepository extends Repository
             lightTheme: false,
             lastMessage: 0,
             hatchery: {
-                id: '1'
+                id: '1',
+                eggs: []
             },
             badges: [],
             job: {},
@@ -41,7 +42,6 @@ class UserRepository extends Repository
             dragonFood: 0,
 
             // RPG: Structures
-            incubator: {},
             farms: [],
             temples: []
         }, super.parse(entity) || {});
