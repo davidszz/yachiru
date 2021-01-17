@@ -44,11 +44,13 @@ class MiscUtils
      */
     static shortNumber(num, digits, separator = '.')
     {
+        if (!num) return '0';
+
         const si = [
             { value: 1E9, symbol: 'BI' },
             { value: 1E6, symbol: 'M' },
             { value: 1E3, symbol: 'k' },
-            { value: 0, symbol: '' }
+            { value: 1, symbol: '' }
         ];
 
         const regex = /\.0+$|(\.[0-9]*[1-9])0+$/;
