@@ -6,10 +6,13 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-app.post('/payments', (req, res) => {
-    
-}); 
+module.exports = (client) => {
+    app.post('/payments', (req, res) => {
+        console.log(req.body);
+        res.sendStatus(200);
+    }); 
 
-app.listen(port, () => {
-    console.log('Express connected! Listenening at port ' + port);
-});
+    app.listen(port, () => {
+        client.log('Express connected! Listenening at port ' + port, { color: 'green', tags: [ 'MercadoPago' ] });
+    });
+}
