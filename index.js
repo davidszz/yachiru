@@ -2,7 +2,9 @@
 const express = require('express');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
 
 //#region Start canvas
 var canvasLoaded = false;
@@ -33,9 +35,9 @@ client.initialize();
 //#endregion
 
 app.get('/notification', (req, res) => {
-    res.sendStatus(200);
+    res.send('hello world!');
 });
 
-app.listen(port, () => {
-    console.log('Express connected! Listenening at port ' + port);
+app.listen(PORT, () => {
+    console.log('Express connected! Listenening at port ' + PORT);
 });
