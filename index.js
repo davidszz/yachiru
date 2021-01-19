@@ -32,7 +32,7 @@ client.initialize();
 // client.on('rateLimit', (...args) => console.log('rateLimit', ...args));
 //#endregion
 
-app.get('/', (req, res) => {
+app.post('/', (req, res) => {
     console.log(req.query, req.params);
     res.sendStatus(201);
 });
