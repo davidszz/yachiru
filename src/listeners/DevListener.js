@@ -15,7 +15,7 @@ module.exports = class DevListener extends EventListener
 
     async onLoaded()
     {
-        
+        // const payment = await this.mp.getPayments();
     }
 
     async onReady()

@@ -23,6 +23,7 @@ module.exports = class Command
         this.canvas = options.canvas || false;
         this.prefix = client.prefix || process.env.PREFIX || 'y!';
         this.new = options.new || false;
+        this.tool = options.tool || false;
     }
 
     get fullname()

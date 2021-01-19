@@ -13,6 +13,7 @@ module.exports = {
     ClanUtils: require('./utils/ClanUtils'),
     DragonUtils: require('./utils/DragonUtils'),
     ArenaUtils: require('./utils/ArenaUtils'),
+    MercadoPagoUtils: require('./utils/MercadoPagoUtils'),
 
     // Structures
     Loader: require('./structures/Loader'),
@@ -25,6 +26,7 @@ module.exports = {
     YachiruEmbed: require('./structures/YachiruEmbed'),
     ItemManager: require('./structures/ItemManager'),
     DragonsManager: require('./structures/DragonsManager'),
+    MercadoPago: require('./structures/MercadoPago'),
 
     // Data [BIN FILES]
     DragonsData: require('./assets/bin/data/dragons.json'),

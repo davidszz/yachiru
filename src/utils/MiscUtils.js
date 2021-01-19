@@ -1,7 +1,6 @@
 const humanizeDuration = require('humanize-duration');
 const moment = require('moment');
 const Intl = require('intl');
-const { replace } = require('lodash');
 
 moment.locale('pt-BR');
 
@@ -91,6 +90,18 @@ class MiscUtils
         });
     }
 
+    static parseDuration(ms, limit = 3, units = [ 'mo', 'w', 'd', 'h' ])
+    {
+        return humanizeDuration(ms, {
+            language: 'pt',
+            units,
+            round: true,
+            largest: limit,
+            conjunction: " e ", 
+            serialComma: false
+        });
+    }
+
     static fromNow(ms)
     {
         return moment(ms).fromNow();
@@ -106,6 +117,18 @@ class MiscUtils
         num = parseInt(num);
         const formatter = Intl.NumberFormat('en-US');
         return formatter.format(num).split(',').join(separator);
+    }
+
+    static randString(length)
+    {
+        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        const result = [];
+        for (let i = 0; i < length; i++)
+        {
+            result.push(chars.charAt(Math.floor(Math.random() * chars.length)));
+        }
+
+        return result.join('');
     }
 }
 

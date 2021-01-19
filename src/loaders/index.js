@@ -3,5 +3,6 @@ module.exports = {
     CommandLoader: require('./CommandLoader'),
     DatabaseLoader: require('./DatabaseLoader'),
     PlayersLoader: require('./PlayersLoader'),
-    ItemsLoader: require('./ItemsLoader')
+    ItemsLoader: require('./ItemsLoader'),
+    MercadoPagoLoader: require('./MercadoPagoLoader')
 }

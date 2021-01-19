@@ -11,6 +11,8 @@ class GuildRepository extends Repository
     parse(entity) 
     {
         return {
+            expiresAt: 0,
+            payments: [],
             commandsChannel: '',
             ...(super.parse(entity) || {})
         }

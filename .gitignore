@@ -1,3 +1,4 @@
 node_modules/
+.env
 src/listeners/DevListener.js
 src/assets/images/dragons/dragon-template.psd

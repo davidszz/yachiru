@@ -11,6 +11,7 @@ module.exports = class extends Command
             category: 'Misc',
             usage: '[comando]',
             examples: [ 'perfil' ],
+            tool: true,
             parameters: [
                 {
                     type: 'string'
