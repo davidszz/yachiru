@@ -12,6 +12,10 @@ module.exports = (client) => {
         res.sendStatus(200);
     }); 
 
+    app.get('/payments', (req, res) => {
+        res.sendStatus(200);
+    })
+
     app.listen(port, () => {
         client.log('Express connected! Listenening at port ' + port, { color: 'green', tags: [ 'MercadoPago' ] });
     });
