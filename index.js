@@ -33,7 +33,7 @@ client.initialize();
 //#endregion
 
 app.get('/notification', (req, res) => {
-    res.send(200);
+    res.sendStatus(200);
 });
 
 app.listen(port, () => {
