@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const _ = require('lodash');
 const Loaders = require('./loaders');
 const Lang = require('./lang/pt-BR.json');
-// const MercadoPagoModule = require('./modules/MercadoPago');
+const MercadoPagoModule = require('./modules/MercadoPago');
 
 class Yachiru extends Discord.Client 
 {
@@ -40,7 +40,7 @@ class Yachiru extends Discord.Client
             await loader.load();
         }
 
-        // MercadoPagoModule(this);
+        MercadoPagoModule(this);
 
         try 
         {
