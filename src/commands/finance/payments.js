@@ -20,11 +20,13 @@ module.exports = class extends Command
         channel.startTyping()
             .catch(e => e);
 
-        const payments = await this.client.mp.getGuildPayments(guild.id);
+        const paymentsData = await this.client.mp.getGuildPayments(guild.id);
 
-        if (!payments.length) {
+        if (!paymentsData.length) {
             return channel.send('O servidor atual não possui nenhum pagamento.');
         }
+
+        const payments = paymentsData.sort((a, b) => b.id - a.id);
 
         const embed = new YachiruEmbed()
             .setTitle('Suas faturas');
@@ -45,7 +47,7 @@ module.exports = class extends Command
             embed.setDescription([
                 embed.description || '',
                 '',
-                `**ID:** ${payment.id} | **${price}**`,
+                `**ID:** ${payment.id} | **${price}** - *${MiscUtils.fromNow((new Date(payment.date_created)).getTime())}*`,
                 `Status: \`${statusType[payment.status] || payment.status}\` Data: \`${date}\``
             ]);
         }
