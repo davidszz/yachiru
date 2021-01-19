@@ -8,7 +8,7 @@ module.exports = class MercadoPago
         this.client = client;
         
         mercadopago.configure({
-            access_token: process.env.MERCADOPAGO_SANDBOX_ACCESS_TOKEN
+            access_token: process.env.MERCADOPAGO_ACCESS_TOKEN
         });
     }
 

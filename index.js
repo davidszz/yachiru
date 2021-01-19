@@ -34,12 +34,8 @@ client.initialize();
 // client.on('rateLimit', (...args) => console.log('rateLimit', ...args));
 //#endregion
 
-app.get('/notification', (req, res) => {
-    res.status(200).send('OK');
-});
-
 app.post('/notification', (req, res) => {
-    res.status(200).send('OK');
+    res.sendStatus(200);
 })
 
 app.listen(PORT, () => {
