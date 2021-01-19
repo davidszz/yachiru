@@ -13,10 +13,7 @@ module.exports = (client) => {
     }); 
 
     app.get('/payments', (req, res) => {
-        res.send({
-            message: 'works',
-            status: 200
-        });
+        res.sendStatus(200);
     })
 
     app.listen(port, () => {
