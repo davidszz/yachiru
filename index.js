@@ -35,8 +35,12 @@ client.initialize();
 //#endregion
 
 app.get('/notification', (req, res) => {
-    res.send('hello world!');
+    res.status(200).send('OK');
 });
+
+app.post('/notification', (req, res) => {
+    res.status(200).send('OK');
+})
 
 app.listen(PORT, () => {
     console.log('Express connected! Listenening at port ' + PORT);
