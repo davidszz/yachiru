@@ -45,6 +45,14 @@ module.exports = class MercadoPago
         return payment && payment.body || payment;
     }
 
+    async getPayment(id)
+    {
+        const payment = await mercadopago.payment.get(Number(id))
+            .catch(() => null);
+
+        return payment;
+    }
+
     async getPayments(query = {})
     {
         const payments = await mercadopago.payment.search({
