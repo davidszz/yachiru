@@ -39,8 +39,8 @@ module.exports = class extends Command
 
             const price = MiscUtils.formatCurrency(payment.transaction_amount);
             const date = payment.date_approved
-                ? (new Date(payment.date_approved)).toLocaleString()
-                : (new Date(payment.date_created)).toLocaleString();
+                ? (new Date(payment.date_approved)).toLocaleString('pt-BR')
+                : (new Date(payment.date_created)).toLocaleString('pt-BR');
 
             embed.setDescription([
                 embed.description || '',

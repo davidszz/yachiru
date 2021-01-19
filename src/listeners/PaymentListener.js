@@ -1,5 +1,5 @@
 const { red } = require('chalk');
-const { EventListener } = require('../');
+const { EventListener, MiscUtils } = require('../');
 
 module.exports = class PaymentListener extends EventListener
 {
@@ -41,6 +41,9 @@ module.exports = class PaymentListener extends EventListener
                 expiresAt: time,
                 payments
             });
+
+            const guild = this.guilds.cache.get(data.guild) || await this.guilds.fetch(data.guild).catch(() => null);
+            this.log(`(${(new Date()).toLocaleString('pt-BR')}) New payment received from <${guild && guild.name || 'GUILD'}>(${data.guild}) - ${MiscUtils.formatCurrency(data.price)}`);
         }
     }
 }
