@@ -6,13 +6,8 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 module.exports = (client) => {
-    app.post('/payments/notification', (req, res) => {
-        const body = req.body || {};
-        if (body.type === 'payment')
-        {
-            client.emit('paymentNotification', body);
-        }
-        
+    app.get('/payments/notification', (req, res) => {
+        console.log('query', req.query, 'params', req.params);
         res.sendStatus(200);
     });
 

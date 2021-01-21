@@ -12,6 +12,7 @@ module.exports = class extends Command
             aliases: [ 'payment' ],
             description: 'Crie um link de pagamento de 30 dias do bot.',
             category: 'Financeiro',
+            permissions: [ 'ADMINISTRATOR' ],
             tool: true
         });
     }

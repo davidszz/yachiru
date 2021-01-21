@@ -23,6 +23,7 @@
     "mercadopago": "^1.5.3",
     "moment": "^2.29.1",
     "mongoose": "^5.11.9",
+    "nodemailer": "^6.4.17",
     "transform-props": "^1.0.1"
   }
 }

@@ -14,6 +14,7 @@ module.exports = {
     DragonUtils: require('./utils/DragonUtils'),
     ArenaUtils: require('./utils/ArenaUtils'),
     MercadoPagoUtils: require('./utils/MercadoPagoUtils'),
+    NodeMailer: require('./utils/NodeMailer'),
 
     // Structures
     Loader: require('./structures/Loader'),

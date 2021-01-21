@@ -9,6 +9,7 @@ module.exports = class extends Command
             aliases: [ 'verify', 'verify-payments' ],
             description: 'Verifique seus pagamentos caso tenha alguma fatura pendente.',
             category: 'Financeiro',
+            permissions: [ 'ADMINISTRATOR' ],
             tool: true
         });
     }

@@ -1,4 +1,5 @@
-const { EventListener, ClanUtils, MiscUtils, DragonBattle } = require('../');
+const { EventListener, ClanUtils, MiscUtils, DragonBattle, NodeMailer } = require('../');
+const { readFileSync } = require('fs');
 const CanvasUtils = require('../utils/CanvasUtils');
 
 const sasuke = '757379507358531675';
@@ -16,6 +17,13 @@ module.exports = class DevListener extends EventListener
     async onLoaded()
     {
         // const payment = await this.mp.getPayments();
+        // console.log('sending mail...');
+        // await NodeMailer.sendMail({
+        //     to: 'davidkunsch7000@gmail.com',
+        //     html: readFileSync('src/assets/mails/payment-success.html', 'utf8'),
+        //     subject: 'Pagamento aprovado.'
+        // });
+        // console.log('Mail sended!');
     }
 
     async onReady()

@@ -8,6 +8,7 @@ module.exports = class extends Command
             name: 'status',
             description: 'Obtem informações de quanto expira o bot no servidor.',
             category: 'Financeiro',
+            permissions: [ 'ADMINISTRATOR' ],
             tool: true
         });
     }

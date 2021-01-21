@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+        #wrapper {
+            background-color: #efefef;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            padding-top: 20px;
+        }
+
+        #wrapper > div {
+            width: 80%;
+            max-width: 750px;
+            background-color: white;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        #wrapper .payment-icon {
+            padding: 20px 10px;
+            text-align: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #wrapper > div > div > img {
+            width: 150px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+        
+        #wrapper > div > div > h1 {
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            margin: 0 auto;
+            font-size: 23px;    
+            color: rgb(113, 184, 113);
+        }
+
+        hr {
+            border: none;
+            background-color: #dedede;
+            width: 100%;
+            height: 1px;
+            margin: 20px auto;
+        }
+
+        .max-fifty {
+            max-width: 50%;
+        }
+
+        .payment-infos {
+            width: 80%;
+            margin: 0 auto;
+            margin-top: 50px;
+            max-width: 600px;
+            padding-bottom: 50px;
+            display: block;
+        }
+
+        .payment-infos > h6 {
+            font-size: 15px;
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0 auto;
+            text-align: center;
+            margin-bottom: 10px;
+            color: rgba(0,0,0,.7);
+            font-weight: lighter;
+        }
+
+        .payment-infos > table {
+            width: 100%;
+            padding: 0;
+            border-collapse: collapse;
+        }
+
+        .payment-infos > table td:last-child {
+            text-align: right;
+        }
+
+        .payment-infos > table td:first-child {
+            font-weight: 600;
+        }
+
+        .payment-info td {
+            border-bottom: 1px solid rgba(0,0,0,.1);
+        }
+
+        .payment-info {
+            line-height: 25px;
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 15px;
+        }
+
+        .payment-description {
+            max-width: 70%;
+            text-align: center;
+            margin: 0 auto;
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .payment-description > p > span {
+            background-color: rgb(159, 160, 211);
+            padding: 1px 5px;
+            border-radius: 3px;
+            color: white;
+        }
+        
+        footer {
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer > p {
+            margin: 5px;
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #777;
+        }
+
+        footer > p > a {
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div>
+            <div class="payment-icon">
+                <img src="https://icons-for-free.com/iconfiles/png/512/complete+done+green+success+valid+icon-1320183462969251652.png" alt="success">
+                <h1>Pagamento Aprovado</h1>
+            </div>
+            <hr class="max-fifty">
+            <div class="payment-description">
+                <p>Obrigado Sasuke#0001 por continuar pagando nosso bot e utilizando de nossos serviços. Seu pagamento foi aprovado. Caso você não tenha recebido o tempo do bot, digite <span>y!verificar</span> para desbloquear o bot rapidamente!</p>
+            </div>
+            <div class="payment-infos">
+                <h6>Informações do pagamento:</h6>
+                <table>
+                    <tr class="payment-info">
+                        <td>ID</td>
+                        <td>{id}</td>
+                    </tr>
+                    <tr class="payment-info">
+                        <td>Status</td>
+                        <td>{status}</td>
+                    </tr>
+                    <tr class="payment-info">
+                        <td>Detalhes:</td>
+                        <td>Acreditado</td>
+                    </tr>
+                    <tr class="payment-info">
+                        <td>Data:</td>
+                        <td>20/01/2021 16:04</td>
+                    </tr>
+                    <tr class="payment-info">
+                        <td>Pagamento por:</td>
+                        <td>Boleto Bancário</td>
+                    </tr>
+                    <tr class="payment-info">
+                        <td>Cobrança</td>
+                        <td>R$30,00</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <footer>
+            <p>Caso não esteja satisfeto com a compra, contate o <a href="https://discord.gg/V6AMWGjZJQ">suporte</a>.</p>
+            <p>Yachiru Bot - 2020</p>
+        </footer>
+    </div>
+</body>
+</html>
