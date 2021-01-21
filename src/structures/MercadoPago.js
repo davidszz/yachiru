@@ -33,7 +33,8 @@ module.exports = class MercadoPago
                     quantity,
                     unit_price
                 }
-            ]
+            ],
+            notification_url: 'https://sasukeeh.herokuapp.com/payments/notification'
         };
 
         if (ext_ref)
