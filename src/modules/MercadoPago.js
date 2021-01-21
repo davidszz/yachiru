@@ -7,7 +7,9 @@ app.use(express.json());
 
 module.exports = (client) => {
     app.post('/payments/notification', (req, res) => {
-        console.log('query', req.query, 'params', req.params, 'body', req.body);
+        if (!req.query || (!req.query.id && !req.query.type)) return;
+        client.emit('paymentNotification', req.query);
+        
         res.sendStatus(200);
     });
 
