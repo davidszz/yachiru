@@ -10,6 +10,7 @@ module.exports = class extends Command
             category: 'Configuração',
             description: 'Defina um unico canal em que meus comandos poderão ser utilizados.',
             usage: '<canal ou remove>',
+	    permissions: [ 'ADMINISTRATOR' ], 
             examples: [
                 '#Yachiru',
                 '796832689352081428'

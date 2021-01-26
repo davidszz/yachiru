@@ -65,7 +65,7 @@ module.exports = class PaymentListener extends EventListener
                     .replace('{product}', body.description)
                     .replace('{price}', MiscUtils.formatCurrency(body.transaction_amount))
                     .replace('{status}', 'Aprovado')
-                    .replace('{details}', 'CC   redenciado')
+                    .replace('{details}', 'Credenciado')
                     .replace('{date}', new Date(body.date_approved).toLocaleString('pt-BR'))
                     .replace('{payment_type}', payment_types[body.payment_type_id]);
 
