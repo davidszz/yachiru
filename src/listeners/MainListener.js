@@ -78,14 +78,14 @@ class MainListener extends EventListener
             const command = this.commands.find(c => c.name.toLowerCase() === cmd || (c.aliases && c.aliases.includes(cmd)));
             if (command)
             {
-                if (!command.tool)
-                {
-                    const data = await this.database.guilds.findOne(message.guild.id, 'expiresAt');
-                    if (data.expiresAt < Date.now())
-                    {
-                        return message.reply(`O bot expirou. Use **${prefix}botstatus** para saber mais.`)
-                    }
-                }
+//                 if (!command.tool)
+//                 {
+//                     const data = await this.database.guilds.findOne(message.guild.id, 'expiresAt');
+//                     if (data.expiresAt < Date.now())
+//                     {
+//                         return message.reply(`O bot expirou. Use **${prefix}botstatus** para saber mais.`)
+//                     }
+//                 }
 
                 if (!message.member.hasPermission('ADMINISTRATOR'))
                 {
